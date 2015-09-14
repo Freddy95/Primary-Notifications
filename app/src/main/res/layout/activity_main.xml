@@ -20,6 +20,8 @@
         android:layout_toEndOf="@+id/textView"
         android:layout_marginLeft="226dp"
         android:layout_marginStart="226dp"
-        android:onClick="addProfile"/>
+        android:onClick="addProfile"
+        android:textSize="30dp"
+        android:padding="1dp" />
 
 </RelativeLayout>
