@@ -1,18 +1,34 @@
 package com.estevez95gmail.f.primarynotifications;
 
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
-
+    String number;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        TelephonyManager manager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+        PhoneStateListener callStateListener = new PhoneStateListener() {
+            public void onCallStateChanged(int state, String incomingNumber) {
+                //  React to incoming call.
+                number = incomingNumber;
+                // If phone ringing
+                if (state == TelephonyManager.CALL_STATE_RINGING) {
+                    Toast.makeText(getApplicationContext(), "Phone Is Ringing", Toast.LENGTH_LONG).show();
+                }
+            }
+        };
+        manager.listen(callStateListener,PhoneStateListener.LISTEN_CALL_STATE);
     }
 
     @Override
@@ -36,8 +52,16 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
-    public boolean addProfile(View v){
+    public void addProfile(View v){
         Toast.makeText(getBaseContext(), "Hello :) "+ Toast.LENGTH_LONG, Toast.LENGTH_LONG).show();
-        return false;
+
     }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        Log.d("CLASS_NAME", "onPause");
+    }
+
+
 }
