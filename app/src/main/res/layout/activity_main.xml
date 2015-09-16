@@ -8,25 +8,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/frag">
-    <TextView android:text="@string/hello_world"
+    <TextView android:text="Profiles"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textView" />
-
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="+"
-        android:id="@+id/add_prof"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/textView"
-        android:layout_toEndOf="@+id/textView"
-        android:layout_marginLeft="300dp"
-        android:layout_marginStart="300dp"
-        android:onClick="addProfile"
-        android:textSize="30dp"
-        android:padding="1dp" />
 
     </FrameLayout>
 

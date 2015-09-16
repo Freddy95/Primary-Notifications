@@ -9,10 +9,16 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
+    //NUMBER OF INCOMING CALL
     String number;
+    //HOLDS PROFILES USER CREATES
+    ArrayList<Profile> profiles;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
                 number = incomingNumber;
                 // If phone ringing
                 if (state == TelephonyManager.CALL_STATE_RINGING) {
-                    Toast.makeText(getApplicationContext(), "Phone Is Ringing", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Phone Is Ringing " + number, Toast.LENGTH_LONG).show();
                 }
             }
         };
@@ -49,19 +55,32 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         }
+        //add profile
+        if(id == R.id.action_addProf){
+            return addProfile();
+
+        }
 
         return super.onOptionsItemSelected(item);
     }
-    public void addProfile(View v){
-        Toast.makeText(getBaseContext(), "Hello :) "+ Toast.LENGTH_LONG, Toast.LENGTH_LONG).show();
-
+    /*
+     * ALLOWS USER TO CREATE NEW PROFILE
+     */
+    public boolean addProfile(){
+        Toast.makeText(getBaseContext(), "Hello :) ", Toast.LENGTH_SHORT).show();
+        return true;
     }
 
     @Override
     public void onPause(){
         super.onPause();
-        Log.d("CLASS_NAME", "onPause");
+        Log.d("mainActivity", "onPause");
     }
 
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        Log.d("mainActivity", "onDestroy");
+    }
 
 }
