@@ -1,6 +1,9 @@
 package com.estevez95gmail.f.primarynotifications;
 
+import android.app.ActionBar;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.PhoneStateListener;
@@ -57,8 +60,8 @@ public class MainActivity extends AppCompatActivity {
         }
         //add profile
         if(id == R.id.action_addProf){
-            return addProfile();
-
+            addProfile();
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -66,9 +69,9 @@ public class MainActivity extends AppCompatActivity {
     /*
      * ALLOWS USER TO CREATE NEW PROFILE
      */
-    public boolean addProfile(){
-        Toast.makeText(getBaseContext(), "Hello :) ", Toast.LENGTH_SHORT).show();
-        return true;
+    public void addProfile(){
+        Intent add = new Intent(this, AddProfileActivity.class);
+        startActivity(add);
     }
 
     @Override

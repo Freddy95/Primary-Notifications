@@ -8,4 +8,5 @@ import java.util.ArrayList;
 public class Profile {
 
     ArrayList<Contact> selected = new ArrayList<>();
+    int startHour, endHour, startMinute, endMinute;
 }
