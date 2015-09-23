@@ -1,9 +1,12 @@
 package com.estevez95gmail.f.primarynotifications;
 
 import android.app.ActionBar;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
+import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.PhoneStateListener;
@@ -85,5 +88,7 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         Log.d("mainActivity", "onDestroy");
     }
+
+
 
 }
