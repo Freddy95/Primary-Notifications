@@ -4,6 +4,6 @@
     <string name="action_about">About</string>
     <string name="action_addProfile">Add Profile</string>
     <string name="title_activity_add_profile">AddProfileActivity</string>
-
+    <string name="request_permissions">Request Permissions</string>
     <string name="hello_world">Hello world!</string>
 </resources>

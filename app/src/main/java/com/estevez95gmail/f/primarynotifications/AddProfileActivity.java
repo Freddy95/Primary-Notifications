@@ -1,19 +1,16 @@
 package com.estevez95gmail.f.primarynotifications;
 
-import android.app.Activity;
-import android.app.DialogFragment;
+
 import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.content.res.ColorStateList;
+
 import android.database.Cursor;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -27,9 +24,18 @@ public class AddProfileActivity extends AppCompatActivity {
     int startMin, startHour, endMin, endHour;
     TextView submit;
     ArrayList<Contact> contacts;
+    ArrayList<String> days;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         contacts = new ArrayList<>();
+        days = new ArrayList<>();
+        days.add("Sunday");
+        days.add("Monday");
+        days.add("Tuesday");
+        days.add("Wednesday");
+        days.add("Thursday");
+        days.add("Friday");
+        days.add("Saturday");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_profile);
         getContacts();
@@ -58,6 +64,11 @@ public class AddProfileActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    /**
+     * make user select the start time of this profile
+     * @param v - view
+     */
     public void showStartTime(View v){
         Calendar mcurrentTime = Calendar.getInstance();
         int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
@@ -87,6 +98,11 @@ public class AddProfileActivity extends AppCompatActivity {
 
         mTimePicker.show();
     }
+
+    /**
+     * Make user select the end time of this profile
+     * @param v - view
+     */
     public void showEndTime(View v){
         Calendar mcurrentTime = Calendar.getInstance();
         int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
@@ -117,6 +133,10 @@ public class AddProfileActivity extends AppCompatActivity {
         mTimePicker.show();
     }
 
+    /**
+     * Returns to main activity
+     * @param v - view that initiated function call
+     */
     public void returnHome(View v){
         Intent main = new Intent(AddProfileActivity.this, MainActivity.class);
         startActivity(main);
@@ -130,19 +150,45 @@ public class AddProfileActivity extends AppCompatActivity {
     public void selectContacts(View v){
         SelectContactDialog dialog = new SelectContactDialog();
         dialog.add(contacts);
-        dialog.show(getFragmentManager(), "Selecting Contact");
+        dialog.show(getFragmentManager(), "Select Contacts");
+
     }
+
+    public void selectDays(View v){
+        SelectDialog selectDays = new SelectDialog();
+        selectDays.show(getFragmentManager(), "Select Days");
+    }
+    /**
+     * gets the list of contacts from users phone
+     */
     public void getContacts(){
-        Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
-        while (phones.moveToNext()){
-            String name=phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-            String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-            if(phoneNumber != null && phoneNumber != "") {
-                Contact newContact = new Contact(name, phoneNumber);
-                contacts.add(newContact);
+
+        try {
+            Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
+            while (phones.moveToNext()){
+                String name=phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                if(phoneNumber != null && !(phoneNumber.equals( ""))) {
+                    Contact newContact = new Contact(name, phoneNumber);
+
+                    contacts.add(newContact);
+                }
             }
+            phones.close();
+            Collections.sort(contacts, Contact.contactNameComp);
+        } catch (RuntimeException e) {
+            Toast.makeText(getBaseContext(), "Need Permissions First.", Toast.LENGTH_SHORT).show();
+            Intent main = new Intent(AddProfileActivity.this, MainActivity.class);
+            startActivity(main);
         }
-        phones.close();
-        Collections.sort(contacts, Contact.contactNameComp);
     }
+    /**
+     * When user is finished setting up profile add it to list in MainActivity
+     */
+    public void finished(View v){
+
+    }
+
+
+
 }
