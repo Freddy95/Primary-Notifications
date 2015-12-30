@@ -1,11 +1,13 @@
 package com.estevez95gmail.f.primarynotifications;
 
+import android.view.View;
+
 import java.util.ArrayList;
 
 /**
  * Contains the times and days of the week for this app to be active
  */
-public class Profile {
+public class Profile{
 
     ArrayList<Contact> selected = new ArrayList<>();
     int startHour, endHour, startMinute, endMinute;

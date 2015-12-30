@@ -1,6 +1,7 @@
 package com.estevez95gmail.f.primarynotifications;
 
 
+import android.app.Activity;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -20,24 +22,18 @@ import java.util.Calendar;
 import java.util.Collections;
 
 public class AddProfileActivity extends AppCompatActivity {
-    static boolean start, end;
+    static boolean start, end, selectedContacts, selectedDays;
     int startMin, startHour, endMin, endHour;
     TextView submit;
     ArrayList<Contact> contacts;
-    ArrayList<String> days;
+    TextView startView;
+    TextView endView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        contacts = new ArrayList<>();
-        days = new ArrayList<>();
-        days.add("Sunday");
-        days.add("Monday");
-        days.add("Tuesday");
-        days.add("Wednesday");
-        days.add("Thursday");
-        days.add("Friday");
-        days.add("Saturday");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_profile);
+        init();
         getContacts();
         submit = (TextView)findViewById(R.id.submit_prof);
     }
@@ -58,9 +54,7 @@ public class AddProfileActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+
 
         return super.onOptionsItemSelected(item);
     }
@@ -85,10 +79,20 @@ public class AddProfileActivity extends AppCompatActivity {
 
                 if(callCount == 0)    // On first call
                 {
+                    if(selectedHour > endHour){
+                        Toast.makeText(getBaseContext(), "Select a time before the End Time", Toast.LENGTH_SHORT).show();
+                        return;
+                    }else if(selectedMinute >= endMin){
+                        if(selectedHour == endHour){
+                            Toast.makeText(getBaseContext(), "Select a time before the End Time", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
                     Toast.makeText(getApplicationContext(), "Start time picked", Toast.LENGTH_SHORT).show();
                     start = true;
                     startMin = selectedMinute;
                     startHour = selectedHour;
+                    updateView(true);
                 }
                 callCount++;
                 // Incrementing call count.
@@ -119,10 +123,20 @@ public class AddProfileActivity extends AppCompatActivity {
 
                 if(callCount == 0)    // On first call
                 {
+                    if(selectedHour < startHour){
+                        Toast.makeText(getBaseContext(), "Select a time after the Start Time", Toast.LENGTH_SHORT).show();
+                        return;
+                    }else if(selectedMinute <= startMin){
+                        if(selectedHour == startHour){
+                            Toast.makeText(getBaseContext(), "Select a time after the Start Time", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
                     Toast.makeText(getApplicationContext(), "End time picked", Toast.LENGTH_SHORT).show();
                     end = true;
                     endMin = selectedMinute;
                     endHour = selectedHour;
+                    updateView(false);
                 }
                 callCount++;
                    // Incrementing call count.
@@ -138,8 +152,8 @@ public class AddProfileActivity extends AppCompatActivity {
      * @param v - view that initiated function call
      */
     public void returnHome(View v){
-        Intent main = new Intent(AddProfileActivity.this, MainActivity.class);
-        startActivity(main);
+          finish();
+
     }
 
     /*public void initSubmit(){
@@ -177,7 +191,7 @@ public class AddProfileActivity extends AppCompatActivity {
             phones.close();
             Collections.sort(contacts, Contact.contactNameComp);
         } catch (RuntimeException e) {
-            Toast.makeText(getBaseContext(), "Need Permissions First.", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getBaseContext(), "Need Permissions First.", Toast.LENGTH_SHORT).show();
             Intent main = new Intent(AddProfileActivity.this, MainActivity.class);
             startActivity(main);
         }
@@ -189,6 +203,37 @@ public class AddProfileActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * initializing values
+     */
+    public void init(){
+        startView = (TextView) findViewById(R.id.setStartTime);
+        endView = (TextView) findViewById(R.id.setEndTime);
+        contacts = new ArrayList<>();
+        start = false;
+        end = false;
+        selectedDays =false;
+        selectedContacts = false;
+        startMin = 0;
+        startHour = 0;
+        endMin = 24;
+        endHour = 60;
+    }
+
+    public void updateView(boolean start){
+
+        if(start){
+            if(startHour > 11)
+                startView.setText(((startHour%13)+(startHour/13)) + ":" + startMin + " pm");
+            else
+                startView.setText(startHour + ":" + startMin + " am");
+        }else{
+            if(endHour > 11)
+                endView.setText(((endHour%13)+(endHour/13)) + ":" + endMin + " pm");
+            else
+                endView.setText(endHour + ":" + endMin + " am");
+        }
+    }
 
 
 }

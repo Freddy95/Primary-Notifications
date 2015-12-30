@@ -38,20 +38,22 @@ public class MainActivity extends AppCompatActivity {
     //NUMBER OF INCOMING CALL
     String number;
     //HOLDS PROFILES USER CREATES
-    ArrayList<Profile> profiles;
-    boolean allPerms = false;
+    static ArrayList<Profile> profiles;
+
 
     final private int REQUEST_PERMISSIONS = 123;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if(savedInstanceState == null)
+        if (savedInstanceState == null) {
             profiles = new ArrayList<>();
+        }
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         try {
-            TelephonyManager manager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+            TelephonyManager manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
             PhoneStateListener callStateListener = new PhoneStateListener() {
                 public void onCallStateChanged(int state, String incomingNumber) {
                     //  React to incoming call.
@@ -64,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
             };
             manager.listen(callStateListener, PhoneStateListener.LISTEN_CALL_STATE);
         } catch (RuntimeException e) {
-                Toast.makeText(getBaseContext(), "Primary Notifications requires permissions", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getBaseContext(), "Primary Notifications requires permissions", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -83,52 +85,65 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+
         //add profile
-        if(id == R.id.action_addProf){
+        if (id == R.id.action_addProf) {
             addProfile();
             return true;
         }
-        if(id == R.id.action_request_permission){
-            checkPermissions();
-        }
+
 
         return super.onOptionsItemSelected(item);
     }
+
     /**
      * ALLOWS USER TO CREATE NEW PROFILE
      */
-    public void addProfile(){
-        if(Build.VERSION.SDK_INT >= 23) {
-            //checkPermissions();
-            if(!checkPerms()){// we didnt get all permissions needed
-                Toast.makeText(getBaseContext(), "Need All Permissions", Toast.LENGTH_SHORT).show();
-                checkPermissions();
+    public void addProfile() {
+        //CHECK WHICH VERSION OF ANDROID
+        if (Build.VERSION.SDK_INT >= 23) {
+            //IF ANDROID 6 OR GREATER MUST CHECK TO SEE IF WE HAVE PERMISSIONS
+            if (checkSelfPermission(Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED &&
+                    checkSelfPermission(Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+                //WE HAVE PERMISSIONS ABLE TO ADD PROFILE
+                Intent add = new Intent(this, AddProfileActivity.class);
+                startActivity(add);
+                return;
+            } else {
+
+
+                //DONT HAVE PERMISSIONS MUST REQUEST FROM USER
+                //CHECK PERMISSIONS WE DO HAVE THEN ASK FOR ALL NEEDED PERMISSIONS
+                checkCurrentPermissions();
                 return;
             }
+
         }
+        //NOT RUNNING ANDROID 6 OR GREATER
+        //Permissions allowed at install time no need to check
+
         Intent add = new Intent(this, AddProfileActivity.class);
         startActivity(add);
     }
 
     @Override
-    public void onPause(){
+    public void onPause() {
         super.onPause();
         Log.d("mainActivity", "onPause");
     }
+
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
 
     }
+
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         super.onDestroy();
         Log.d("mainActivity", "onDestroy");
     }
-
+/*
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
@@ -158,25 +173,16 @@ public class MainActivity extends AppCompatActivity {
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
-    }
+    }*/
 
-    private void checkPermissions() {
-        List<String> permissionsNeeded = new ArrayList<String>();
+    /*private void checkPermissions() {
 
-        final List<String> permissionsList = new ArrayList<String>();
-        if (!addPermission(permissionsList, Manifest.permission.READ_PHONE_STATE))
-            permissionsNeeded.add("Read Phone Calls");
-        if (!addPermission(permissionsList, Manifest.permission.READ_CONTACTS))
-            permissionsNeeded.add("Read Contacts");
 
-        if(permissionsNeeded.size() == 0){
-            Toast.makeText(getBaseContext(), "Permissions Already Granted", Toast.LENGTH_SHORT).show();
-            allPerms = true;
-            return;
-        }
+
+
+
         allPerms = false;
-        if (permissionsList.size() > 0) {
-            if (permissionsNeeded.size() > 0) {
+        if (permissionsNeeded.size() > 0) {
                 // Need Rationale
                 String message = "You need to grant access to " + permissionsNeeded.get(0);
                 for (int i = 1; i < permissionsNeeded.size(); i++)
@@ -185,30 +191,34 @@ public class MainActivity extends AppCompatActivity {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                requestPermissions(permissionsList.toArray(new String[permissionsList.size()]),
+                                requestPermissions(permissionsNeeded.toArray(new String[permissionsNeeded.size()]),
                                         REQUEST_PERMISSIONS);
                             }
                         });
                 return;
             }
-            requestPermissions(permissionsList.toArray(new String[permissionsList.size()]),
+            requestPermissions(permissionsNeeded.toArray(new String[permissionsNeeded.size()]),
                     REQUEST_PERMISSIONS);
 
-        }
 
 
-    }
 
-    private boolean addPermission(List<String> permissionsList, String permission) {
-        if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
-            permissionsList.add(permission);
+    }*/
+
+    public void askForPermissions(String permission) {
+        if (Build.VERSION.SDK_INT >= 23) {
             // Check for Rationale Option
             if (!shouldShowRequestPermissionRationale(permission))
-                return false;
+                Toast.makeText(this, permission + " is required.", Toast.LENGTH_SHORT).show();
+            //Ask for permission
+            requestPermissions(new String[]{permission}, REQUEST_PERMISSIONS);
+
         }
-        return true;
+
+
     }
-    private void showMessageOKCancel(String message,DialogInterface.OnClickListener okListener) {
+
+    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
         new AlertDialog.Builder(MainActivity.this)
                 .setMessage(message)
                 .setPositiveButton("OK", okListener)
@@ -217,16 +227,20 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
 
-    public boolean checkPerms(){
-        if(checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED){
-            return false;
-        }
-        if(checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED){
-            return false;
-        }
-        return true;
-    }
+    public void checkCurrentPermissions() {
 
+        if(Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+                askForPermissions(Manifest.permission.READ_CONTACTS);
+
+
+            }
+            if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+                askForPermissions(Manifest.permission.READ_PHONE_STATE);
+            }
+        }
+
+    }
 
 
 }
