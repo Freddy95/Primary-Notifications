@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Start Time"
+        android:id="@+id/startTime"
+        android:layout_margin="15dp"
+        android:textSize="25dp"
+        android:textColor="#3399FF"/>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="50dp"
+        android:id="@+id/confirmBox"
+        android:layout_gravity="right|top"
+        android:layout_alignBottom="@+id/Sat"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="15dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="End Time"
+        android:textSize="25dp"
+        android:id="@+id/endTime"
+        android:layout_gravity="center_horizontal|top"
+        android:layout_alignTop="@+id/startTime"
+        android:layout_toRightOf="@+id/to"
+        android:textColor="#FF3300"
+        android:layout_marginLeft="15dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="-"
+        android:id="@+id/to"
+        android:textColor="#000000"
+        android:layout_alignBottom="@id/startTime"
+        android:layout_toRightOf="@id/startTime"
+        android:layout_marginLeft="1dp"
+        android:textSize="25dp"/>
+
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Su"
+        android:id="@+id/Sun"
+        android:layout_below="@id/startTime"
+        android:layout_alignLeft="@+id/startTime"
+        android:layout_alignStart="@+id/startTime"
+        android:textSize="16dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Mo"
+        android:id="@+id/Mon"
+        android:textColor="#000000"
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="10dp"
+        android:layout_alignTop="@+id/Sun"
+        android:layout_toRightOf="@+id/Sun"
+        android:layout_toEndOf="@+id/Sun"
+        android:textSize="16dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Tu"
+        android:id="@+id/Tue"
+        android:layout_alignTop="@+id/Sun"
+        android:layout_toRightOf="@+id/Mon"
+        android:layout_toEndOf="@+id/Mon"
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="10dp"
+        android:textSize="16dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="We"
+        android:id="@+id/Wed"
+        android:layout_alignTop="@+id/Sun"
+        android:layout_toRightOf="@+id/Tue"
+        android:layout_toEndOf="@+id/Tue"
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="10dp"
+        android:textSize="16dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Th"
+        android:id="@+id/Thur"
+        android:layout_alignTop="@+id/Sun"
+        android:layout_toRightOf="@+id/Wed"
+        android:layout_toEndOf="@+id/Wed"
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="10dp"
+        android:textSize="16dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Fr"
+        android:id="@+id/Fri"
+        android:layout_alignTop="@+id/Sun"
+        android:layout_toRightOf="@+id/Thur"
+        android:layout_toEndOf="@+id/Thur"
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="10dp"
+        android:textSize="16dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="St"
+        android:id="@+id/Sat"
+        android:layout_alignTop="@+id/Sun"
+        android:layout_toRightOf="@+id/Fri"
+        android:layout_toEndOf="@+id/Fri"
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="10dp"
+        android:textSize="16dp" />
+
+
+
+
+</RelativeLayout>
