@@ -13,7 +13,7 @@ public class Profile{
     int startHour, endHour, startMinute, endMinute;
 
 
-    public Profile(ArrayList<Contact> selected, int startHour, int endHour, int startMinute, int endMinute) {
+    public Profile(ArrayList<Contact> selected, int startHour,  int startMinute, int endHour, int endMinute) {
         this.selected = selected;
         this.startHour = startHour;
         this.endHour = endHour;

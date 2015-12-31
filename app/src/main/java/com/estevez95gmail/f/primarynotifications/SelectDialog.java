@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 /**
  * Created by Freddy Estevez on 10/4/15.
+ * This class is used to select which days this app will run on.
  */
 public class SelectDialog extends DialogFragment {
     CharSequence[] cons;

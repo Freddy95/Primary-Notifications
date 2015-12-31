@@ -22,7 +22,7 @@ import java.util.Calendar;
 import java.util.Collections;
 
 public class AddProfileActivity extends AppCompatActivity {
-    static boolean start, end, selectedContacts, selectedDays;
+    boolean start, end, selectedContacts, selectedDays;
     int startMin, startHour, endMin, endHour;
     TextView submit;
     ArrayList<Contact> contacts;
@@ -59,6 +59,14 @@ public class AddProfileActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void submit(View v){
+        Profile p = new Profile(contacts, startHour, startMin, endHour, endMin);
+        MainActivity.profiles.add(p);
+        Intent main = new Intent(AddProfileActivity.this, MainActivity.class);
+        startActivity(main);
+
+    }
+
     /**
      * make user select the start time of this profile
      * @param v - view
@@ -92,7 +100,7 @@ public class AddProfileActivity extends AppCompatActivity {
                     start = true;
                     startMin = selectedMinute;
                     startHour = selectedHour;
-                    updateView(true);
+                    updateTimeView(true);
                 }
                 callCount++;
                 // Incrementing call count.
@@ -136,7 +144,7 @@ public class AddProfileActivity extends AppCompatActivity {
                     end = true;
                     endMin = selectedMinute;
                     endHour = selectedHour;
-                    updateView(false);
+                    updateTimeView(false);
                 }
                 callCount++;
                    // Incrementing call count.
@@ -220,18 +228,31 @@ public class AddProfileActivity extends AppCompatActivity {
         endHour = 60;
     }
 
-    public void updateView(boolean start){
-
+    /**
+     * Changes the text of selecting times to the time the user set.
+     * @param start - whether user selected start time or end time.
+     */
+    public void updateTimeView(boolean start){
+        String min;
         if(start){
+
+            if(startMin < 10)
+                min = "0" + startMin;
+            else
+                min = "" + startMin;
             if(startHour > 11)
-                startView.setText(((startHour%13)+(startHour/13)) + ":" + startMin + " pm");
+                startView.setText(((startHour%13)+(startHour/13)) + ":" + min + " Pm");
             else
-                startView.setText(startHour + ":" + startMin + " am");
+                startView.setText(startHour + ":" + min + " Am");
         }else{
-            if(endHour > 11)
-                endView.setText(((endHour%13)+(endHour/13)) + ":" + endMin + " pm");
+            if(endMin < 10)
+                min = "0" + endMin;
             else
-                endView.setText(endHour + ":" + endMin + " am");
+                min = "" + endMin;
+            if(endHour > 11)
+                endView.setText(((endHour%13)+(endHour/13)) + ":" + min + " Pm");
+            else
+                endView.setText(endHour + ":" + min + " Am");
         }
     }
 

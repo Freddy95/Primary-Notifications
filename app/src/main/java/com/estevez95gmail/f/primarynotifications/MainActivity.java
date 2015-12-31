@@ -3,6 +3,7 @@ package com.estevez95gmail.f.primarynotifications;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ListActivity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,6 +21,7 @@ import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -32,25 +34,29 @@ import java.util.List;
 import java.util.Map;
 
 import android.Manifest;
+import android.widget.Toolbar;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends ListActivity {
     //NUMBER OF INCOMING CALL
     String number;
     //HOLDS PROFILES USER CREATES
-    static ArrayList<Profile> profiles;
+    static ArrayList<Profile> profiles = new ArrayList<>();
 
 
     final private int REQUEST_PERMISSIONS = 123;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if (savedInstanceState == null) {
-            profiles = new ArrayList<>();
-        }
+        Log.d("CHECK", "Does this work");
+
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ProfileAdapter adapter = new ProfileAdapter(getListView().getContext(), profiles);
+        setListAdapter(adapter);
+
+
 
         try {
             TelephonyManager manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
@@ -73,8 +79,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -242,5 +249,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    public void addProfileFinish(Profile profile){
+        profiles.add(profile);
+    }
 
 }
