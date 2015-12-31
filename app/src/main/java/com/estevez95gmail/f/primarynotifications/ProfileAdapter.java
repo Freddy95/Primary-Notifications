@@ -1,6 +1,9 @@
 package com.estevez95gmail.f.primarynotifications;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,8 +58,64 @@ public class ProfileAdapter extends ArrayAdapter<Profile> {
         if(mProfiles.isEmpty())
             return convertView;
         Profile currentProfile = mProfiles.get(position);
-        holder.startTime.setText(currentProfile.startHour + ":" + currentProfile.startMinute);
-        Toast.makeText(mContext, "Selected " + position, Toast.LENGTH_SHORT).show();
+        holder.startTime.setText(currentProfile.getStartTime());
+        holder.endTime.setText(currentProfile.getEndTime());
+
+        if(!(currentProfile.isMonday())){
+            holder.mon.setTextColor(Color.GRAY);
+        }else{
+            SpannableString content = new SpannableString(holder.mon.getText());
+            content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+            holder.mon.setText(content);
+        }
+
+        if(!(currentProfile.isTuesday())){
+            holder.tue.setTextColor(Color.GRAY);
+        }else{
+            SpannableString content = new SpannableString(holder.tue.getText());
+            content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+            holder.tue.setText(content);
+        }
+
+        if(!(currentProfile.isWednesday())){
+            holder.wed.setTextColor(Color.GRAY);
+        }else{
+            SpannableString content = new SpannableString(holder.wed.getText());
+            content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+            holder.wed.setText(content);
+        }
+
+        if(!(currentProfile.isThursday())){
+            holder.thur.setTextColor(Color.GRAY);
+        }else{
+            SpannableString content = new SpannableString(holder.thur.getText());
+            content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+            holder.thur.setText(content);
+        }
+
+        if(!(currentProfile.isFriday())){
+            holder.fri.setTextColor(Color.GRAY);
+        }else{
+            SpannableString content = new SpannableString(holder.fri.getText());
+            content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+            holder.fri.setText(content);
+        }
+
+        if(!(currentProfile.isSaturday())){
+            holder.sat.setTextColor(Color.GRAY);
+        }else{
+            SpannableString content = new SpannableString(holder.sat.getText());
+            content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+            holder.sat.setText(content);
+        }
+
+        if(!(currentProfile.isSunday())){
+            holder.sun.setTextColor(Color.GRAY);
+        }else{
+            SpannableString content = new SpannableString(holder.sun.getText());
+            content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
+            holder.sun.setText(content);
+        }
 
         return convertView;
     }

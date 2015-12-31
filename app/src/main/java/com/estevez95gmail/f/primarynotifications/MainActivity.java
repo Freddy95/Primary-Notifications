@@ -13,9 +13,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.provider.ContactsContract;
 
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
@@ -25,6 +22,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -42,6 +41,7 @@ public class MainActivity extends ListActivity {
     String number;
     //HOLDS PROFILES USER CREATES
     static ArrayList<Profile> profiles = new ArrayList<>();
+    ListView list;
 
 
     final private int REQUEST_PERMISSIONS = 123;
@@ -52,8 +52,11 @@ public class MainActivity extends ListActivity {
 
 
         super.onCreate(savedInstanceState);
+        list = getListView();
+
+
         setContentView(R.layout.activity_main);
-        ProfileAdapter adapter = new ProfileAdapter(getListView().getContext(), profiles);
+        ProfileAdapter adapter = new ProfileAdapter(list.getContext(), profiles);
         setListAdapter(adapter);
 
 
@@ -212,6 +215,10 @@ public class MainActivity extends ListActivity {
 
     }*/
 
+    /**
+     * Ask for specified permission.
+     * @param permission - permission to ask for
+     */
     public void askForPermissions(String permission) {
         if (Build.VERSION.SDK_INT >= 23) {
             // Check for Rationale Option
@@ -234,6 +241,10 @@ public class MainActivity extends ListActivity {
                 .show();
     }
 
+
+    /**
+     * Check current permissions we already have.
+     */
     public void checkCurrentPermissions() {
 
         if(Build.VERSION.SDK_INT >= 23) {
@@ -254,4 +265,14 @@ public class MainActivity extends ListActivity {
         profiles.add(profile);
     }
 
+    @Override
+    /**
+     * When user clicks on a profile from the homepage allow them to either edit or delete the profile.
+     */
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+        Profile p = profiles.get(position);
+
+        Toast.makeText(getApplicationContext(), "Item " + position + " Was Selected", Toast.LENGTH_SHORT).show();
+        super.onListItemClick(l, v, position, id);
+    }
 }

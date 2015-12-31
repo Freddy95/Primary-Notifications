@@ -11,13 +11,125 @@ public class Profile{
 
     ArrayList<Contact> selected = new ArrayList<>();
     int startHour, endHour, startMinute, endMinute;
+    String startTime, endTime;
+    boolean monday, tuesday, wednesday, thursday, friday, saturday, sunday;
 
 
-    public Profile(ArrayList<Contact> selected, int startHour,  int startMinute, int endHour, int endMinute) {
-        this.selected = selected;
+
+
+    public Profile() {
+
+    }
+
+    public int getStartHour() {
+        return startHour;
+    }
+
+    public void setStartHour(int startHour) {
         this.startHour = startHour;
+    }
+
+    public ArrayList<Contact> getSelected() {
+        return selected;
+    }
+
+    public void setSelected(ArrayList<Contact> selected) {
+        this.selected = selected;
+    }
+
+    public int getEndHour() {
+        return endHour;
+    }
+
+    public void setEndHour(int endHour) {
         this.endHour = endHour;
+    }
+
+    public int getStartMinute() {
+        return startMinute;
+    }
+
+    public void setStartMinute(int startMinute) {
         this.startMinute = startMinute;
+    }
+
+    public int getEndMinute() {
+        return endMinute;
+    }
+
+    public void setEndMinute(int endMinute) {
         this.endMinute = endMinute;
+    }
+
+    public boolean isSunday() {
+        return sunday;
+    }
+
+    public void setSunday(boolean sunday) {
+        this.sunday = sunday;
+    }
+
+    public boolean isSaturday() {
+        return saturday;
+    }
+
+    public void setSaturday(boolean saturday) {
+        this.saturday = saturday;
+    }
+
+    public boolean isFriday() {
+        return friday;
+    }
+
+    public void setFriday(boolean friday) {
+        this.friday = friday;
+    }
+
+    public boolean isThursday() {
+        return thursday;
+    }
+
+    public void setThursday(boolean thursday) {
+        this.thursday = thursday;
+    }
+
+    public boolean isWednesday() {
+        return wednesday;
+    }
+
+    public void setWednesday(boolean wednesday) {
+        this.wednesday = wednesday;
+    }
+
+    public boolean isTuesday() {
+        return tuesday;
+    }
+
+    public void setTuesday(boolean tuesday) {
+        this.tuesday = tuesday;
+    }
+
+    public boolean isMonday() {
+        return monday;
+    }
+
+    public void setMonday(boolean monday) {
+        this.monday = monday;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
     }
 }

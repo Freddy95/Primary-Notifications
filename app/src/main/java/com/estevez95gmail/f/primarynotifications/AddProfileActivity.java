@@ -28,9 +28,10 @@ public class AddProfileActivity extends AppCompatActivity {
     ArrayList<Contact> contacts;
     TextView startView;
     TextView endView;
+    Profile profile;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
+        profile = new Profile();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_profile);
         init();
@@ -60,8 +61,10 @@ public class AddProfileActivity extends AppCompatActivity {
     }
 
     public void submit(View v){
-        Profile p = new Profile(contacts, startHour, startMin, endHour, endMin);
-        MainActivity.profiles.add(p);
+
+        profile.setStartTime(startView.getText().toString());
+        profile.setEndTime(endView.getText().toString());
+        MainActivity.profiles.add(profile);
         Intent main = new Intent(AddProfileActivity.this, MainActivity.class);
         startActivity(main);
 
@@ -96,10 +99,13 @@ public class AddProfileActivity extends AppCompatActivity {
                             return;
                         }
                     }
+
                     Toast.makeText(getApplicationContext(), "Start time picked", Toast.LENGTH_SHORT).show();
                     start = true;
                     startMin = selectedMinute;
                     startHour = selectedHour;
+                    profile.setStartHour(startHour);
+                    profile.setStartMinute(startMin);
                     updateTimeView(true);
                 }
                 callCount++;
@@ -144,6 +150,10 @@ public class AddProfileActivity extends AppCompatActivity {
                     end = true;
                     endMin = selectedMinute;
                     endHour = selectedHour;
+
+                    profile.setStartHour(startHour);
+                    profile.setStartMinute(startMin);
+
                     updateTimeView(false);
                 }
                 callCount++;
@@ -177,7 +187,7 @@ public class AddProfileActivity extends AppCompatActivity {
     }
 
     public void selectDays(View v){
-        SelectDialog selectDays = new SelectDialog();
+        SelectDialog selectDays = new SelectDialog(profile);
         selectDays.show(getFragmentManager(), "Select Days");
     }
     /**

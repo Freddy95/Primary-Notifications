@@ -20,6 +20,10 @@ public class SelectContactDialog extends DialogFragment{
     // all contacts
     static ArrayList<Contact> contacts;
 
+    Profile profile;
+
+
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         mSelectedItems = new ArrayList<>();

@@ -18,6 +18,11 @@ public class SelectDialog extends DialogFragment {
     ArrayList<String> mSelectedItems;
     // all contacts
     static String[] days = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+    Profile p;
+
+    public SelectDialog(Profile p){
+       this.p = p;
+    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -42,7 +47,12 @@ public class SelectDialog extends DialogFragment {
                                     // Else, if the item is already in the array, remove it
                                     mSelectedItems.remove(mSelectedItems.indexOf(which));
                                 }
+
+
+
+
                             }
+
                         })
                         // Set the action buttons
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -50,9 +60,39 @@ public class SelectDialog extends DialogFragment {
                     public void onClick(DialogInterface dialog, int id) {
                         // User clicked OK, so save the mSelectedItems results somewhere
                         // or return them to the component that opened the dialog
+                    for(int i = 0; i < mSelectedItems.size(); i ++){
+                        String day  = mSelectedItems.get(i);
+                        switch (day) {
+                            case "Monday":
+                                p.setMonday(true);
+                                break;
+                            case "Tuesday":
+                                p.setTuesday(true);
+                                break;
+                            case "Wednesday":
+                                p.setWednesday(true);
+                                break;
+                            case "Thursday":
+                                p.setThursday(true);
+                                break;
+                            case "Friday":
+                                p.setFriday(true);
+                                break;
+                            case "Saturday":
+                                p.setSaturday(true);
+                                break;
+                            case "Sunday":
+                                p.setSunday(true);
+                                break;
+
+                        }
+
+                    }
+
 
                     }
                 })
+
                 .setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
