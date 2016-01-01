@@ -85,7 +85,9 @@
             android:layout_alignTop="@+id/selectDays"
             android:layout_alignLeft="@+id/phoneCalls"
             android:layout_alignStart="@+id/phoneCalls"
-            android:layout_alignBottom="@+id/selectDays" />
+            android:layout_alignBottom="@+id/selectDays"
+            android:onClick="smsToggle"/>
+
 
         <CheckBox
             android:layout_width="wrap_content"
@@ -97,7 +99,8 @@
             android:layout_alignTop="@+id/selectContacts"
             android:layout_toRightOf="@+id/selectContacts"
             android:layout_toEndOf="@+id/selectContacts"
-            android:layout_above="@+id/selectDays" />
+            android:layout_above="@+id/selectDays"
+            android:onClick="phoneCallsToggle"/>
 
     <TextView
         android:layout_width="wrap_content"

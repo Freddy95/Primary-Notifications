@@ -9,10 +9,12 @@ import android.database.Cursor;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -21,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 
-public class AddProfileActivity extends AppCompatActivity {
+public class AddProfileActivity extends AppCompatActivity implements SelectContactDialog.OnDialogDismissListener {
     boolean start, end, selectedContacts, selectedDays;
     int startMin, startHour, endMin, endHour;
     TextView submit;
@@ -29,6 +31,8 @@ public class AddProfileActivity extends AppCompatActivity {
     TextView startView;
     TextView endView;
     Profile profile;
+    CheckBox sms;
+    CheckBox phoneCalls;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         profile = new Profile();
@@ -37,6 +41,11 @@ public class AddProfileActivity extends AppCompatActivity {
         init();
         getContacts();
         submit = (TextView)findViewById(R.id.submit_prof);
+        submit.setEnabled(false);
+
+        sms = (CheckBox) findViewById(R.id.SMS);
+        phoneCalls = (CheckBox) findViewById(R.id.phoneCalls);
+        checkSubmit();
     }
 
     @Override
@@ -180,15 +189,18 @@ public class AddProfileActivity extends AppCompatActivity {
     }*/
 
     public void selectContacts(View v){
-        SelectContactDialog dialog = new SelectContactDialog();
+        SelectContactDialog dialog = new SelectContactDialog(profile);
         dialog.add(contacts);
         dialog.show(getFragmentManager(), "Select Contacts");
+        checkSubmit();
 
     }
 
     public void selectDays(View v){
         SelectDialog selectDays = new SelectDialog(profile);
         selectDays.show(getFragmentManager(), "Select Days");
+
+        checkSubmit();
     }
     /**
      * gets the list of contacts from users phone
@@ -240,9 +252,13 @@ public class AddProfileActivity extends AppCompatActivity {
 
     /**
      * Changes the text of selecting times to the time the user set.
+     * Also checks to see if we should enable the submit button.
      * @param start - whether user selected start time or end time.
      */
     public void updateTimeView(boolean start){
+        //Check if submit should be enabled.
+        checkSubmit();
+
         String min;
         if(start){
 
@@ -251,19 +267,67 @@ public class AddProfileActivity extends AppCompatActivity {
             else
                 min = "" + startMin;
             if(startHour > 11)
-                startView.setText(((startHour%13)+(startHour/13)) + ":" + min + " Pm");
+                startView.setText(((startHour%13)+(startHour/13)) + ":" + min + " PM");
             else
-                startView.setText(startHour + ":" + min + " Am");
+                startView.setText(startHour + ":" + min + " AM");
         }else{
             if(endMin < 10)
                 min = "0" + endMin;
             else
                 min = "" + endMin;
             if(endHour > 11)
-                endView.setText(((endHour%13)+(endHour/13)) + ":" + min + " Pm");
+                endView.setText(((endHour%13)+(endHour/13)) + ":" + min + " PM");
             else
-                endView.setText(endHour + ":" + min + " Am");
+                endView.setText(endHour + ":" + min + " AM");
         }
+    }
+
+    /**
+     * Checks to see if user can add profile to their list of profiles.
+     * If so, submit button enable.
+     */
+    public void checkSubmit(){
+        if(profile.getSelected().isEmpty()){
+            submit.setEnabled(false);
+            return;
+        }if(!end || !start){
+            submit.setEnabled(false);
+            return;
+        }if(!(profile.hasDay())){
+            submit.setEnabled(false);
+            return;
+        }
+        if(!(profile.isSms() || profile.isPhoneCalls())){
+            submit.setEnabled(false);
+            return;
+        }
+        submit.setEnabled(true);
+
+    }
+
+
+    public void smsToggle(View v){
+        if(sms.isChecked()){
+            profile.setSms(true);
+        }else{
+            profile.setSms(false);
+        }
+        checkSubmit();
+
+    }
+
+    public void phoneCallsToggle(View v){
+        if(phoneCalls.isChecked()){
+            profile.setPhoneCalls(true);
+        }else{
+            profile.setPhoneCalls(false);
+        }
+        checkSubmit();
+    }
+
+    public void onDialogDismissListener(int position) {
+        // Do something here to display that article
+        Log.d("welp", "DOES THIS WORK NOW");
     }
 
 

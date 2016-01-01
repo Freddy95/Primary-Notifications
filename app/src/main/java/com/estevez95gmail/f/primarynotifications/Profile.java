@@ -14,8 +14,23 @@ public class Profile{
     String startTime, endTime;
     boolean monday, tuesday, wednesday, thursday, friday, saturday, sunday;
 
+    boolean sms, phoneCalls;
 
+    public boolean isSms() {
+        return sms;
+    }
 
+    public void setSms(boolean sms) {
+        this.sms = sms;
+    }
+
+    public boolean isPhoneCalls() {
+        return phoneCalls;
+    }
+
+    public void setPhoneCalls(boolean phoneCalls) {
+        this.phoneCalls = phoneCalls;
+    }
 
     public Profile() {
         monday = false;
@@ -137,5 +152,9 @@ public class Profile{
 
     public void setStartTime(String startTime) {
         this.startTime = startTime;
+    }
+
+    public boolean hasDay(){
+        return (monday || tuesday || wednesday || thursday || friday || saturday || sunday);
     }
 }
