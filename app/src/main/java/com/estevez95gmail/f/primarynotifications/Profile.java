@@ -7,7 +7,7 @@ import java.util.ArrayList;
 /**
  * Contains the times and days of the week for this app to be active
  */
-public class Profile{
+public class Profile {
 
     ArrayList<Contact> selected = new ArrayList<>();
     int startHour, endHour, startMinute, endMinute;
@@ -154,7 +154,7 @@ public class Profile{
         this.startTime = startTime;
     }
 
-    public boolean hasDay(){
+    public boolean hasDay() {
         return (monday || tuesday || wednesday || thursday || friday || saturday || sunday);
     }
 }

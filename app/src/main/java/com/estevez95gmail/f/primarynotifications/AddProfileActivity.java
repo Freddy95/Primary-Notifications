@@ -1,7 +1,6 @@
 package com.estevez95gmail.f.primarynotifications;
 
 
-import android.app.Activity;
 import android.app.TimePickerDialog;
 import android.content.Intent;
 
@@ -13,7 +12,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -23,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 
-public class AddProfileActivity extends AppCompatActivity implements SelectContactDialog.OnDialogDismissListener {
+public class AddProfileActivity extends AppCompatActivity implements MultiChoiceDialog.OnDialogDismissListener{
     boolean start, end, selectedContacts, selectedDays;
     int startMin, startHour, endMin, endHour;
     TextView submit;
@@ -189,18 +187,17 @@ public class AddProfileActivity extends AppCompatActivity implements SelectConta
     }*/
 
     public void selectContacts(View v){
-        SelectContactDialog dialog = new SelectContactDialog(profile);
-        dialog.add(contacts);
+        MultiChoiceDialog dialog = new MultiChoiceDialog(profile, true);
+        dialog.addContacts(contacts);
         dialog.show(getFragmentManager(), "Select Contacts");
-        checkSubmit();
+
 
     }
 
     public void selectDays(View v){
-        SelectDialog selectDays = new SelectDialog(profile);
-        selectDays.show(getFragmentManager(), "Select Days");
-
-        checkSubmit();
+        MultiChoiceDialog dialog = new MultiChoiceDialog(profile, false);
+        dialog.show(getFragmentManager(), "Select Days");
+        Log.d("tag", "Selecting days");
     }
     /**
      * gets the list of contacts from users phone
@@ -328,6 +325,7 @@ public class AddProfileActivity extends AppCompatActivity implements SelectConta
     public void onDialogDismissListener(int position) {
         // Do something here to display that article
         Log.d("welp", "DOES THIS WORK NOW");
+        checkSubmit();
     }
 
 
