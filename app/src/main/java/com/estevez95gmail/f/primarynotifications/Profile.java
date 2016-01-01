@@ -18,7 +18,13 @@ public class Profile{
 
 
     public Profile() {
-
+        monday = false;
+        tuesday = false;
+        wednesday = false;
+        thursday = false;
+        friday = false;
+        saturday = false;
+        sunday = false;
     }
 
     public int getStartHour() {
