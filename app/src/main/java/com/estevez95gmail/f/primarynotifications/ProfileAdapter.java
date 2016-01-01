@@ -34,12 +34,11 @@ public class ProfileAdapter extends ArrayAdapter<Profile> {
     public View getView(final int position, View convertView, ViewGroup parent){
         ViewHolder holder;
         if(convertView == null){
-            //do stuff in video
 
             convertView = LayoutInflater.from(mContext).inflate(R.layout.profile_view, null);
             holder = new ViewHolder();
             holder.enabled = (CheckBox) convertView.findViewById(R.id.confirmBox);
-            holder.enabled.setEnabled(true);
+            holder.enabled.setChecked(true);
             holder.endTime = (TextView) convertView.findViewById(R.id.endTime);
             holder.startTime = (TextView) convertView.findViewById(R.id.startTime);
             holder.mon = (TextView) convertView.findViewById(R.id.Mon);

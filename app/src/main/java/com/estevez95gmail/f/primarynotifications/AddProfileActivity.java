@@ -25,24 +25,35 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
     boolean start, end, selectedContacts, selectedDays;
     int startMin, startHour, endMin, endHour;
     TextView submit;
+    TextView textView1;
     ArrayList<Contact> contacts;
     TextView startView;
     TextView endView;
     Profile profile;
     CheckBox sms;
     CheckBox phoneCalls;
+    boolean editing;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        profile = new Profile();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_profile);
-        init();
-        getContacts();
         submit = (TextView)findViewById(R.id.submit_prof);
-        submit.setEnabled(false);
+        if(MainActivity.selectedProfile == null) {//If there is no selected profile we are creating a new profile
+            profile = new Profile();
+            editing = false;
+            submit.setEnabled(false);
+            init();
+        }else{//Editing selected profile
+            profile = MainActivity.selectedProfile;
+            editing = true;
+            initEdit();
+        }
 
-        sms = (CheckBox) findViewById(R.id.SMS);
-        phoneCalls = (CheckBox) findViewById(R.id.phoneCalls);
+        getContacts();
+
+
+
         checkSubmit();
     }
 
@@ -158,8 +169,8 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
                     endMin = selectedMinute;
                     endHour = selectedHour;
 
-                    profile.setStartHour(startHour);
-                    profile.setStartMinute(startMin);
+                    profile.setEndHour(endHour);
+                    profile.setEndMinute(endMin);
 
                     updateTimeView(false);
                 }
@@ -204,7 +215,7 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
      */
     public void getContacts(){
 
-        try {
+        /*try {
             Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
             while (phones.moveToNext()){
                 String name=phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
@@ -218,10 +229,10 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
             phones.close();
             Collections.sort(contacts, Contact.contactNameComp);
         } catch (RuntimeException e) {
-            //Toast.makeText(getBaseContext(), "Need Permissions First.", Toast.LENGTH_SHORT).show();
             Intent main = new Intent(AddProfileActivity.this, MainActivity.class);
             startActivity(main);
-        }
+        }*/
+        contacts = MainActivity.contacts;
     }
     /**
      * When user is finished setting up profile add it to list in MainActivity
@@ -245,6 +256,33 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
         startHour = 0;
         endMin = 24;
         endHour = 60;
+        sms = (CheckBox) findViewById(R.id.SMS);
+        phoneCalls = (CheckBox) findViewById(R.id.phoneCalls);
+    }
+
+    public void initEdit(){
+        startView = (TextView) findViewById(R.id.setStartTime);
+        endView = (TextView) findViewById(R.id.setEndTime);
+        contacts = new ArrayList<>();
+        start = true;
+        end = true;
+        selectedDays = true;
+        selectedContacts = true;
+        textView1 = (TextView) findViewById(R.id.cancel_prof);
+        textView1.setText("DELETE");
+
+        startMin = profile.getStartMinute();
+        startHour = profile.getStartHour();
+        endMin = profile.getEndMinute();
+        endHour = profile.getEndHour();
+
+        sms = (CheckBox) findViewById(R.id.SMS);
+        phoneCalls = (CheckBox) findViewById(R.id.phoneCalls);
+        sms.setChecked(profile.isSms());
+        phoneCalls.setChecked(profile.isPhoneCalls());
+
+        updateTimeView(false);//update the end time view
+        updateTimeView(true);//update the start time view
     }
 
     /**

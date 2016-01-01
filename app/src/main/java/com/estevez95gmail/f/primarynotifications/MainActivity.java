@@ -26,6 +26,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -41,7 +42,9 @@ public class MainActivity extends ListActivity {
     String number;
     //HOLDS PROFILES USER CREATES
     static ArrayList<Profile> profiles = new ArrayList<>();
+    static Profile selectedProfile;
     ListView list;
+    static ArrayList<Contact> contacts;
 
 
     final private int REQUEST_PERMISSIONS = 123;
@@ -111,11 +114,14 @@ public class MainActivity extends ListActivity {
      */
     public void addProfile() {
         //CHECK WHICH VERSION OF ANDROID
+        selectedProfile = null;
+
         if (Build.VERSION.SDK_INT >= 23) {
             //IF ANDROID 6 OR GREATER MUST CHECK TO SEE IF WE HAVE PERMISSIONS
             if (checkSelfPermission(Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED &&
                     checkSelfPermission(Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
                 //WE HAVE PERMISSIONS ABLE TO ADD PROFILE
+                getContacts();
                 Intent add = new Intent(this, AddProfileActivity.class);
                 startActivity(add);
                 return;
@@ -131,7 +137,7 @@ public class MainActivity extends ListActivity {
         }
         //NOT RUNNING ANDROID 6 OR GREATER
         //Permissions allowed at install time no need to check
-
+        getContacts();
         Intent add = new Intent(this, AddProfileActivity.class);
         startActivity(add);
     }
@@ -261,18 +267,45 @@ public class MainActivity extends ListActivity {
     }
 
 
-    public void addProfileFinish(Profile profile){
-        profiles.add(profile);
-    }
 
-    @Override
+
     /**
      * When user clicks on a profile from the homepage allow them to either edit or delete the profile.
      */
+    @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
-        Profile p = profiles.get(position);
+        selectedProfile = profiles.get(position);
 
         Toast.makeText(getApplicationContext(), "Item " + position + " Was Selected", Toast.LENGTH_SHORT).show();
+        Intent add = new Intent(this, AddProfileActivity.class);
+        startActivity(add);
         super.onListItemClick(l, v, position, id);
+    }
+
+    /**
+     * gets the list of contacts from users phone
+     */
+    public void getContacts(){
+        if(contacts != null)
+            return;
+        else
+            contacts = new ArrayList<>();
+        try {
+            Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
+            while (phones.moveToNext()){
+                String name=phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                if(phoneNumber != null && !(phoneNumber.equals( ""))) {
+                    Contact newContact = new Contact(name, phoneNumber);
+
+                    contacts.add(newContact);
+                }
+            }
+            phones.close();
+            Collections.sort(contacts, Contact.contactNameComp);
+        } catch (RuntimeException e) {
+            Intent main = new Intent(MainActivity.this, MainActivity.class);
+            startActivity(main);
+        }
     }
 }
