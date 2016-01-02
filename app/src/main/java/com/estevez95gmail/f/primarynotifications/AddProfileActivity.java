@@ -44,10 +44,12 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
             editing = false;
             submit.setEnabled(false);
             init();
+            initHandlers();
         }else{//Editing selected profile
             profile = MainActivity.selectedProfile;
             editing = true;
             initEdit();
+            initEditHandlers();
         }
 
         getContacts();
@@ -78,7 +80,7 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
         return super.onOptionsItemSelected(item);
     }
 
-    public void submit(View v){
+    public void submit(){
 
         profile.setStartTime(startView.getText().toString());
         profile.setEndTime(endView.getText().toString());
@@ -187,7 +189,7 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
      * Returns to main activity
      * @param v - view that initiated function call
      */
-    public void returnHome(View v){
+    public void returnHome(){
           finish();
 
     }
@@ -258,8 +260,13 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
         endHour = 60;
         sms = (CheckBox) findViewById(R.id.SMS);
         phoneCalls = (CheckBox) findViewById(R.id.phoneCalls);
+        textView1 = (TextView) findViewById(R.id.cancel_prof);
+
     }
 
+    /**
+     * Initialize values when editing a profile.
+     */
     public void initEdit(){
         startView = (TextView) findViewById(R.id.setStartTime);
         endView = (TextView) findViewById(R.id.setEndTime);
@@ -283,6 +290,44 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
 
         updateTimeView(false);//update the end time view
         updateTimeView(true);//update the start time view
+    }
+
+    /**
+     * Initialize handlers of controls.
+     */
+    private void initHandlers(){
+
+        submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                submit();
+            }
+        });
+
+        textView1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                returnHome();
+            }
+        });
+
+    }
+
+
+    private void initEditHandlers(){
+        submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finishEdit();
+            }
+        });
+
+        textView1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteProfile();
+            }
+        });
     }
 
     /**
@@ -366,5 +411,18 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
         checkSubmit();
     }
 
+
+    public void finishEdit(){
+        profile.setStartTime(startView.getText().toString());
+        profile.setEndTime(endView.getText().toString());
+        Intent main = new Intent(AddProfileActivity.this, MainActivity.class);
+        startActivity(main);
+    }
+
+    public void deleteProfile(){
+        MainActivity.profiles.remove(profile);
+        Intent main = new Intent(AddProfileActivity.this, MainActivity.class);
+        startActivity(main);
+    }
 
 }
