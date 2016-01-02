@@ -3,9 +3,6 @@ package com.estevez95gmail.f.primarynotifications;
 
 import android.app.TimePickerDialog;
 import android.content.Intent;
-
-import android.database.Cursor;
-import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,7 +16,6 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 
 public class AddProfileActivity extends AppCompatActivity implements MultiChoiceDialog.OnDialogDismissListener{
     boolean start, end, selectedContacts, selectedDays;
@@ -86,8 +82,10 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
         profile.setEndTime(endView.getText().toString());
         profile.setEnabled(true);
         MainActivity.profiles.add(profile);
+        MainActivity.fa.finish();
         Intent main = new Intent(AddProfileActivity.this, MainActivity.class);
         startActivity(main);
+        finish();
 
     }
 
@@ -188,9 +186,9 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
 
     /**
      * Returns to main activity
-     * @param v - view that initiated function call
      */
     public void returnHome(){
+
           finish();
 
     }
@@ -416,14 +414,18 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
     public void finishEdit(){
         profile.setStartTime(startView.getText().toString());
         profile.setEndTime(endView.getText().toString());
+        MainActivity.fa.finish();
         Intent main = new Intent(AddProfileActivity.this, MainActivity.class);
         startActivity(main);
+        finish();
     }
 
     public void deleteProfile(){
         MainActivity.profiles.remove(profile);
+        MainActivity.fa.finish();
         Intent main = new Intent(AddProfileActivity.this, MainActivity.class);
         startActivity(main);
+        finish();
     }
 
 }

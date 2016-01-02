@@ -1,5 +1,6 @@
 package com.estevez95gmail.f.primarynotifications;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Context;
@@ -45,6 +46,7 @@ public class MainActivity extends ListActivity {
     Ringtone ringtone;
     static int originalRingerMode;
     AudioManager audioManager;
+    static Activity fa;
 
 
     final private int REQUEST_PERMISSIONS = 123;
@@ -52,6 +54,8 @@ public class MainActivity extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d("CHECK", "Does this work");
+
+            fa = this;
 
 
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
@@ -158,6 +162,7 @@ public class MainActivity extends ListActivity {
         getContacts();
         Intent add = new Intent(this, AddProfileActivity.class);
         startActivity(add);
+        finish();
     }
 
     @Override
