@@ -47,6 +47,7 @@ public class MainActivity extends ListActivity {
     static int originalRingerMode;
     AudioManager audioManager;
     static Activity fa;
+    static boolean playing;
 
 
     final private int REQUEST_PERMISSIONS = 123;
@@ -55,10 +56,11 @@ public class MainActivity extends ListActivity {
     protected void onCreate(Bundle savedInstanceState) {
         Log.d("CHECK", "Does this work");
 
-            fa = this;
+        fa = this;
 
 
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        Log.d("lets see", "TEST :" + audioManager.getRingerMode() + " ANOTHER TEST " + audioManager.getMode() );
         super.onCreate(savedInstanceState);
         list = getListView();
 
@@ -87,6 +89,7 @@ public class MainActivity extends ListActivity {
 
                         if (ringtone != null) {
                             ringtone.stop();
+                            playing = false;
 
                         }
                         audioManager.setRingerMode(originalRingerMode);
@@ -94,8 +97,10 @@ public class MainActivity extends ListActivity {
                     if (state == TelephonyManager.CALL_STATE_IDLE) {
                         Toast.makeText(getBaseContext(), "maybe doing something", Toast.LENGTH_SHORT).show();
 
-                        if (audioManager != null)
+                        if (audioManager != null) {
                             audioManager.setRingerMode(originalRingerMode);
+                            playing = false;
+                        }
                     }
                 }
             };
@@ -162,7 +167,6 @@ public class MainActivity extends ListActivity {
         getContacts();
         Intent add = new Intent(this, AddProfileActivity.class);
         startActivity(add);
-        finish();
     }
 
     @Override
@@ -346,20 +350,28 @@ public class MainActivity extends ListActivity {
     }
 
     public void ring() {
-        Toast.makeText(getApplicationContext(), "Ringing", Toast.LENGTH_SHORT).show();
-        if (ringtone != null) {
-            if (ringtone.isPlaying())
-                return;
-        }
-        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
-        Ringtone ringtone = RingtoneManager.getRingtone(getApplicationContext(), notification);
+            if(!playing) {
+                Toast.makeText(getApplicationContext(), "Ringing", Toast.LENGTH_SHORT).show();
+
+                Log.d("Org", "Original " + audioManager.getRingerMode());
+                originalRingerMode = audioManager.getRingerMode();
+
+                Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+                Ringtone ringtone = RingtoneManager.getRingtone(getApplicationContext(), notification);
 
 
-        int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_RING);
-        originalRingerMode = audioManager.getRingerMode();
-        audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-        audioManager.setStreamVolume(AudioManager.STREAM_RING, maxVolume, AudioManager.FLAG_SHOW_UI + AudioManager.FLAG_PLAY_SOUND);
-        ringtone.play();
+                int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_RING);
+
+
+                audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+                Log.d("Ringer MODE NORMAL", "NORMAL MODE  " + AudioManager.RINGER_MODE_NORMAL);
+                audioManager.getStreamVolume(AudioManager.STREAM_RING);
+                audioManager.setStreamVolume(AudioManager.STREAM_RING, maxVolume, AudioManager.FLAG_SHOW_UI + AudioManager.FLAG_PLAY_SOUND);
+                ringtone.play();
+                playing = true;
+            }
+
+
     }
 
 
