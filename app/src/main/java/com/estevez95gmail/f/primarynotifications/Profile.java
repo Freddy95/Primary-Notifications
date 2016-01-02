@@ -13,7 +13,7 @@ public class Profile {
     int startHour, endHour, startMinute, endMinute;
     String startTime, endTime;
     boolean monday, tuesday, wednesday, thursday, friday, saturday, sunday;
-
+    boolean enabled;
     boolean sms, phoneCalls;
 
     public boolean isSms() {
@@ -156,5 +156,13 @@ public class Profile {
 
     public boolean hasDay() {
         return (monday || tuesday || wednesday || thursday || friday || saturday || sunday);
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }

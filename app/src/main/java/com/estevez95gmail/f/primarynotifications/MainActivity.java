@@ -1,7 +1,5 @@
 package com.estevez95gmail.f.primarynotifications;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Context;
@@ -9,7 +7,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.graphics.drawable.ColorDrawable;
+import android.media.MediaPlayer;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.provider.ContactsContract;
 
@@ -21,20 +21,16 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.widget.AdapterView;
+
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
 
 import android.Manifest;
-import android.widget.Toolbar;
 
 
 public class MainActivity extends ListActivity {
@@ -45,6 +41,8 @@ public class MainActivity extends ListActivity {
     static Profile selectedProfile;
     ListView list;
     static ArrayList<Contact> contacts;
+    Uri ringtone;
+    MediaPlayer player;
 
 
     final private int REQUEST_PERMISSIONS = 123;
@@ -71,8 +69,12 @@ public class MainActivity extends ListActivity {
                     //  React to incoming call.
                     number = incomingNumber;
                     // If phone ringing
-                    if (state == TelephonyManager.CALL_STATE_RINGING) {
-                        Toast.makeText(getApplicationContext(), "Phone Is Ringing " + number, Toast.LENGTH_LONG).show();
+                    if (state == TelephonyManager.CALL_STATE_RINGING) {//phone is ringing
+                        checkToRing(number);
+                    }
+                    if(state == TelephonyManager.CALL_STATE_OFFHOOK){
+                        if(player != null)
+                            player.stop();
                     }
                 }
             };
@@ -115,7 +117,6 @@ public class MainActivity extends ListActivity {
     public void addProfile() {
         //CHECK WHICH VERSION OF ANDROID
         selectedProfile = null;
-
         if (Build.VERSION.SDK_INT >= 23) {
             //IF ANDROID 6 OR GREATER MUST CHECK TO SEE IF WE HAVE PERMISSIONS
             if (checkSelfPermission(Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED &&
@@ -159,67 +160,7 @@ public class MainActivity extends ListActivity {
         super.onDestroy();
         Log.d("mainActivity", "onDestroy");
     }
-/*
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_PERMISSIONS:
-            {
-                Map<String, Integer> perms = new HashMap<String, Integer>();
-                // Initial
-                perms.put(Manifest.permission.ACCESS_FINE_LOCATION, PackageManager.PERMISSION_GRANTED);
-                perms.put(Manifest.permission.READ_CONTACTS, PackageManager.PERMISSION_GRANTED);
-                perms.put(Manifest.permission.WRITE_CONTACTS, PackageManager.PERMISSION_GRANTED);
-                // Fill with results
-                for (int i = 0; i < permissions.length; i++)
-                    perms.put(permissions[i], grantResults[i]);
 
-                if (perms.get(Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED
-                        && perms.get(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
-                    // All Permissions Granted
-                        allPerms = true;
-                } else {
-                    // Permission Denied
-                    Toast.makeText(MainActivity.this, "Some Permission is Denied", Toast.LENGTH_SHORT)
-                            .show();
-                    allPerms = false;
-                }
-            }
-            break;
-            default:
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }*/
-
-    /*private void checkPermissions() {
-
-
-
-
-
-        allPerms = false;
-        if (permissionsNeeded.size() > 0) {
-                // Need Rationale
-                String message = "You need to grant access to " + permissionsNeeded.get(0);
-                for (int i = 1; i < permissionsNeeded.size(); i++)
-                    message = message + ", " + permissionsNeeded.get(i);
-                showMessageOKCancel(message,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                requestPermissions(permissionsNeeded.toArray(new String[permissionsNeeded.size()]),
-                                        REQUEST_PERMISSIONS);
-                            }
-                        });
-                return;
-            }
-            requestPermissions(permissionsNeeded.toArray(new String[permissionsNeeded.size()]),
-                    REQUEST_PERMISSIONS);
-
-
-
-
-    }*/
 
     /**
      * Ask for specified permission.
@@ -309,6 +250,72 @@ public class MainActivity extends ListActivity {
         }
     }
 
+    public void checkToRing(String phoneNumber){
+        Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int min = calendar.get(Calendar.MINUTE);
 
-    
+        for(Profile p : profiles){
+            if(p.isEnabled()) {
+                Toast.makeText(getApplicationContext(), "Is Enabled" ,Toast.LENGTH_SHORT).show();
+
+                if (p.getStartHour() < hour && p.getEndHour() > hour) {
+                    for (Contact c : p.getSelected()) {
+                        if (c.getPhoneNumber().equals(phoneNumber)) {
+                            // ring
+                            ring();
+                        }
+                    }
+                } else if (p.getStartHour() == hour && p.startHour == p.endHour) {
+                    if (p.getStartMinute() <= min && p.getEndMinute() >= min) {
+
+                        for (Contact c : p.getSelected()) {
+                            if (c.getPhoneNumber().equals(phoneNumber)) {
+                                // ring
+                                ring();
+                            }
+                        }
+                        //ring
+                    }
+                } else if (p.getStartHour() == hour) {
+                    if (p.getStartMinute() <= min) {
+
+                        for (Contact c : p.getSelected()) {
+                            if (c.getPhoneNumber().equals(phoneNumber)) {
+                                // ring
+                                ring();
+                            }
+                        }
+
+                        //ring
+                    }
+                } else if (p.getEndHour() == hour) {
+                    if (p.getEndMinute() >= min) {
+
+                        for (Contact c : p.getSelected()) {
+                            if (c.getPhoneNumber().equals(phoneNumber)) {
+                                // ring
+                                ring();
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+    }
+
+    public void ring(){
+        Toast.makeText(getApplicationContext(), "Ringing", Toast.LENGTH_SHORT).show();
+        if(player != null){
+            if(player.isPlaying())
+                return;
+        }
+        ringtone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+        player  = MediaPlayer.create(this, ringtone);
+        player.start();
+    }
+
+
+
 }

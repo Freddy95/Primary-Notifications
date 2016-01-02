@@ -84,6 +84,7 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
 
         profile.setStartTime(startView.getText().toString());
         profile.setEndTime(endView.getText().toString());
+        profile.setEnabled(true);
         MainActivity.profiles.add(profile);
         Intent main = new Intent(AddProfileActivity.this, MainActivity.class);
         startActivity(main);

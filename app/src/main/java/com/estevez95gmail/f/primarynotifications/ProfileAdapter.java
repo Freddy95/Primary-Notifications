@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,12 +34,22 @@ public class ProfileAdapter extends ArrayAdapter<Profile> {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent){
         ViewHolder holder;
+
         if(convertView == null){
 
             convertView = LayoutInflater.from(mContext).inflate(R.layout.profile_view, null);
             holder = new ViewHolder();
             holder.enabled = (CheckBox) convertView.findViewById(R.id.confirmBox);
             holder.enabled.setChecked(true);
+            holder.enabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(isChecked)
+                        mProfiles.get(position).setEnabled(true);
+                    else
+                        mProfiles.get(position).setEnabled(false);
+                }
+            });
             holder.endTime = (TextView) convertView.findViewById(R.id.endTime);
             holder.startTime = (TextView) convertView.findViewById(R.id.startTime);
             holder.mon = (TextView) convertView.findViewById(R.id.Mon);
@@ -50,6 +61,7 @@ public class ProfileAdapter extends ArrayAdapter<Profile> {
             holder.sun = (TextView) convertView.findViewById(R.id.Sun);
             convertView.setTag(holder);
 
+
         }else{
             holder = (ViewHolder) convertView.getTag();
         }
@@ -57,6 +69,7 @@ public class ProfileAdapter extends ArrayAdapter<Profile> {
         if(mProfiles.isEmpty())
             return convertView;
         Profile currentProfile = mProfiles.get(position);
+
         holder.startTime.setText(currentProfile.getStartTime());
         holder.endTime.setText(currentProfile.getEndTime());
 
