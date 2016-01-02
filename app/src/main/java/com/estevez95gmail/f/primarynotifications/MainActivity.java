@@ -7,7 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.media.MediaPlayer;
+import android.media.AudioManager;
+import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
@@ -41,8 +42,9 @@ public class MainActivity extends ListActivity {
     static Profile selectedProfile;
     ListView list;
     static ArrayList<Contact> contacts;
-    Uri ringtone;
-    MediaPlayer player;
+    Ringtone ringtone;
+    static int originalRingerMode;
+    AudioManager audioManager;
 
 
     final private int REQUEST_PERMISSIONS = 123;
@@ -52,6 +54,7 @@ public class MainActivity extends ListActivity {
         Log.d("CHECK", "Does this work");
 
 
+        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         super.onCreate(savedInstanceState);
         list = getListView();
 
@@ -59,7 +62,6 @@ public class MainActivity extends ListActivity {
         setContentView(R.layout.activity_main);
         ProfileAdapter adapter = new ProfileAdapter(list.getContext(), profiles);
         setListAdapter(adapter);
-
 
 
         try {
@@ -70,11 +72,26 @@ public class MainActivity extends ListActivity {
                     number = incomingNumber;
                     // If phone ringing
                     if (state == TelephonyManager.CALL_STATE_RINGING) {//phone is ringing
+                        if (ringtone != null) {
+                            if (ringtone.isPlaying())
+                                return;
+                        }
                         checkToRing(number);
                     }
-                    if(state == TelephonyManager.CALL_STATE_OFFHOOK){
-                        if(player != null)
-                            player.stop();
+                    if (state == TelephonyManager.CALL_STATE_OFFHOOK) {
+                        Toast.makeText(getBaseContext(), "picked up or hung op", Toast.LENGTH_SHORT).show();
+
+                        if (ringtone != null) {
+                            ringtone.stop();
+
+                        }
+                        audioManager.setRingerMode(originalRingerMode);
+                    }
+                    if (state == TelephonyManager.CALL_STATE_IDLE) {
+                        Toast.makeText(getBaseContext(), "maybe doing something", Toast.LENGTH_SHORT).show();
+
+                        if (audioManager != null)
+                            audioManager.setRingerMode(originalRingerMode);
                     }
                 }
             };
@@ -164,6 +181,7 @@ public class MainActivity extends ListActivity {
 
     /**
      * Ask for specified permission.
+     *
      * @param permission - permission to ask for
      */
     public void askForPermissions(String permission) {
@@ -194,7 +212,7 @@ public class MainActivity extends ListActivity {
      */
     public void checkCurrentPermissions() {
 
-        if(Build.VERSION.SDK_INT >= 23) {
+        if (Build.VERSION.SDK_INT >= 23) {
             if (checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
                 askForPermissions(Manifest.permission.READ_CONTACTS);
 
@@ -206,8 +224,6 @@ public class MainActivity extends ListActivity {
         }
 
     }
-
-
 
 
     /**
@@ -226,17 +242,18 @@ public class MainActivity extends ListActivity {
     /**
      * gets the list of contacts from users phone
      */
-    public void getContacts(){
-        if(contacts != null)
+    public void getContacts() {
+        if (contacts != null)
             return;
         else
             contacts = new ArrayList<>();
         try {
             Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
-            while (phones.moveToNext()){
-                String name=phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+            while (phones.moveToNext()) {
+                String name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
                 String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                if(phoneNumber != null && !(phoneNumber.equals( ""))) {
+                if (phoneNumber != null && !(phoneNumber.equals("")) && !(phoneNumber.contains("-"))) {
+
                     Contact newContact = new Contact(name, phoneNumber);
 
                     contacts.add(newContact);
@@ -250,40 +267,57 @@ public class MainActivity extends ListActivity {
         }
     }
 
-    public void checkToRing(String phoneNumber){
+    public void checkToRing(String phoneNumber) {
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int min = calendar.get(Calendar.MINUTE);
+        if (phoneNumber.length() == 10)
+            phoneNumber = "1" + phoneNumber;
 
-        for(Profile p : profiles){
-            if(p.isEnabled()) {
-                Toast.makeText(getApplicationContext(), "Is Enabled" ,Toast.LENGTH_SHORT).show();
+        for (Profile p : profiles) {
+            if (p.isEnabled()) {
+                Toast.makeText(getApplicationContext(), "Is Enabled", Toast.LENGTH_SHORT).show();
 
                 if (p.getStartHour() < hour && p.getEndHour() > hour) {
+                    Toast.makeText(getApplicationContext(), "Test 1", Toast.LENGTH_SHORT).show();
+
                     for (Contact c : p.getSelected()) {
                         if (c.getPhoneNumber().equals(phoneNumber)) {
+                            Toast.makeText(getApplicationContext(), "TEST 1A", Toast.LENGTH_SHORT).show();
+
                             // ring
                             ring();
+                            return;
                         }
                     }
                 } else if (p.getStartHour() == hour && p.startHour == p.endHour) {
+                    Toast.makeText(getApplicationContext(), "Test 2", Toast.LENGTH_SHORT).show();
+
                     if (p.getStartMinute() <= min && p.getEndMinute() >= min) {
+                        Toast.makeText(getApplicationContext(), "Test 21", Toast.LENGTH_SHORT).show();
 
                         for (Contact c : p.getSelected()) {
                             if (c.getPhoneNumber().equals(phoneNumber)) {
+                                Toast.makeText(getApplicationContext(), "Test 21A", Toast.LENGTH_SHORT).show();
+
                                 // ring
                                 ring();
+                                return;
                             }
                         }
                         //ring
                     }
                 } else if (p.getStartHour() == hour) {
+                    Toast.makeText(getApplicationContext(), "Test 3", Toast.LENGTH_SHORT).show();
+
                     if (p.getStartMinute() <= min) {
+                        Toast.makeText(getApplicationContext(), "Test 3b", Toast.LENGTH_SHORT).show();
 
                         for (Contact c : p.getSelected()) {
                             if (c.getPhoneNumber().equals(phoneNumber)) {
                                 // ring
                                 ring();
+                                return;
                             }
                         }
 
@@ -296,6 +330,7 @@ public class MainActivity extends ListActivity {
                             if (c.getPhoneNumber().equals(phoneNumber)) {
                                 // ring
                                 ring();
+                                return;
                             }
                         }
 
@@ -305,17 +340,22 @@ public class MainActivity extends ListActivity {
         }
     }
 
-    public void ring(){
+    public void ring() {
         Toast.makeText(getApplicationContext(), "Ringing", Toast.LENGTH_SHORT).show();
-        if(player != null){
-            if(player.isPlaying())
+        if (ringtone != null) {
+            if (ringtone.isPlaying())
                 return;
         }
-        ringtone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
-        player  = MediaPlayer.create(this, ringtone);
-        player.start();
-    }
+        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+        Ringtone ringtone = RingtoneManager.getRingtone(getApplicationContext(), notification);
 
+
+        int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_RING);
+        originalRingerMode = audioManager.getRingerMode();
+        audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+        audioManager.setStreamVolume(AudioManager.STREAM_RING, maxVolume, AudioManager.FLAG_SHOW_UI + AudioManager.FLAG_PLAY_SOUND);
+        ringtone.play();
+    }
 
 
 }
