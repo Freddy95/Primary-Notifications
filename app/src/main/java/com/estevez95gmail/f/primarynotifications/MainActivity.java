@@ -45,6 +45,7 @@ public class MainActivity extends ListActivity {
     static ArrayList<Contact> contacts;
     Ringtone ringtone;
     static int originalRingerMode;
+    static int volume;
     AudioManager audioManager;
     static Activity fa;
     static boolean playing;
@@ -59,8 +60,7 @@ public class MainActivity extends ListActivity {
         fa = this;
 
 
-        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        Log.d("lets see", "TEST :" + audioManager.getRingerMode() + " ANOTHER TEST " + audioManager.getMode() );
+
         super.onCreate(savedInstanceState);
         list = getListView();
 
@@ -85,21 +85,32 @@ public class MainActivity extends ListActivity {
                         checkToRing(number);
                     }
                     if (state == TelephonyManager.CALL_STATE_OFFHOOK) {
-                        Toast.makeText(getBaseContext(), "picked up or hung op", Toast.LENGTH_SHORT).show();
+                        if(audioManager != null) {
+                            Toast.makeText(getBaseContext(), "picked up or hung op", Toast.LENGTH_SHORT).show();
 
-                        if (ringtone != null) {
-                            ringtone.stop();
-                            playing = false;
+                            if (ringtone != null) {
+                                ringtone.stop();
+                                playing = false;
 
+                            }
+                            audioManager.setRingerMode(originalRingerMode);
+                            if (originalRingerMode == 2) {
+                                audioManager.setStreamVolume(AudioManager.STREAM_RING, volume, AudioManager.FLAG_SHOW_UI);
+                            }
+                            audioManager = null;
                         }
-                        audioManager.setRingerMode(originalRingerMode);
+
                     }
                     if (state == TelephonyManager.CALL_STATE_IDLE) {
                         Toast.makeText(getBaseContext(), "maybe doing something", Toast.LENGTH_SHORT).show();
 
                         if (audioManager != null) {
                             audioManager.setRingerMode(originalRingerMode);
+                            if (originalRingerMode == 2) {
+                                audioManager.setStreamVolume(AudioManager.STREAM_RING, volume, AudioManager.FLAG_SHOW_UI);
+                            }
                             playing = false;
+                            audioManager = null;
                         }
                     }
                 }
@@ -270,6 +281,17 @@ public class MainActivity extends ListActivity {
             }
             phones.close();
             Collections.sort(contacts, Contact.contactNameComp);
+            ArrayList<Contact> con = contacts;
+            int size = contacts.size();
+            for(int i = 0; i < size-1; i++){
+                if(contacts.get(i).getName().equals(contacts.get(i+1).getName())){
+                    if(contacts.get(i).getPhoneNumber().equals(contacts.get(i+1).getPhoneNumber())){
+                        con.remove(i); // if contact has same number and name remove from list
+                        size--;
+                    }
+                }
+            }
+            contacts = con;
         } catch (RuntimeException e) {
             Intent main = new Intent(MainActivity.this, MainActivity.class);
             startActivity(main);
@@ -280,8 +302,7 @@ public class MainActivity extends ListActivity {
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int min = calendar.get(Calendar.MINUTE);
-        if (phoneNumber.length() == 10)
-            phoneNumber = "1" + phoneNumber;
+
 
         for (Profile p : profiles) {
             if (p.isEnabled()) {
@@ -291,7 +312,7 @@ public class MainActivity extends ListActivity {
                     Toast.makeText(getApplicationContext(), "Test 1", Toast.LENGTH_SHORT).show();
 
                     for (Contact c : p.getSelected()) {
-                        if (c.getPhoneNumber().equals(phoneNumber)) {
+                        if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
                             Toast.makeText(getApplicationContext(), "TEST 1A", Toast.LENGTH_SHORT).show();
 
                             // ring
@@ -306,7 +327,7 @@ public class MainActivity extends ListActivity {
                         Toast.makeText(getApplicationContext(), "Test 21", Toast.LENGTH_SHORT).show();
 
                         for (Contact c : p.getSelected()) {
-                            if (c.getPhoneNumber().equals(phoneNumber)) {
+                            if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
                                 Toast.makeText(getApplicationContext(), "Test 21A", Toast.LENGTH_SHORT).show();
 
                                 // ring
@@ -323,7 +344,7 @@ public class MainActivity extends ListActivity {
                         Toast.makeText(getApplicationContext(), "Test 3b", Toast.LENGTH_SHORT).show();
 
                         for (Contact c : p.getSelected()) {
-                            if (c.getPhoneNumber().equals(phoneNumber)) {
+                            if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
                                 // ring
                                 ring();
                                 return;
@@ -336,7 +357,7 @@ public class MainActivity extends ListActivity {
                     if (p.getEndMinute() >= min) {
 
                         for (Contact c : p.getSelected()) {
-                            if (c.getPhoneNumber().equals(phoneNumber)) {
+                            if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
                                 // ring
                                 ring();
                                 return;
@@ -350,18 +371,21 @@ public class MainActivity extends ListActivity {
     }
 
     public void ring() {
+        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
             if(!playing) {
                 Toast.makeText(getApplicationContext(), "Ringing", Toast.LENGTH_SHORT).show();
 
                 Log.d("Org", "Original " + audioManager.getRingerMode());
                 originalRingerMode = audioManager.getRingerMode();
-
+                if(originalRingerMode == 2){
+                    volume = audioManager.getStreamVolume(AudioManager.STREAM_RING);
+                }
                 Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
                 Ringtone ringtone = RingtoneManager.getRingtone(getApplicationContext(), notification);
 
 
-                int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_RING);
 
+                int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_RING);
 
                 audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
                 Log.d("Ringer MODE NORMAL", "NORMAL MODE  " + AudioManager.RINGER_MODE_NORMAL);
