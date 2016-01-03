@@ -49,6 +49,7 @@ public class MainActivity extends ListActivity {
     AudioManager audioManager;
     static Activity fa;
     static boolean playing;
+    static  SmsListener listener;
 
 
     final private int REQUEST_PERMISSIONS = 123;
@@ -58,7 +59,6 @@ public class MainActivity extends ListActivity {
         Log.d("CHECK", "Does this work");
 
         fa = this;
-
 
 
         super.onCreate(savedInstanceState);
@@ -86,7 +86,6 @@ public class MainActivity extends ListActivity {
                     }
                     if (state == TelephonyManager.CALL_STATE_OFFHOOK) {
                         if(audioManager != null) {
-                            Toast.makeText(getBaseContext(), "picked up or hung op", Toast.LENGTH_SHORT).show();
 
                             if (ringtone != null) {
                                 ringtone.stop();
@@ -102,7 +101,6 @@ public class MainActivity extends ListActivity {
 
                     }
                     if (state == TelephonyManager.CALL_STATE_IDLE) {
-                        Toast.makeText(getBaseContext(), "maybe doing something", Toast.LENGTH_SHORT).show();
 
                         if (audioManager != null) {
                             audioManager.setRingerMode(originalRingerMode);
