@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -309,6 +310,21 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
                 returnHome();
             }
         });
+        sms.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                profile.setSms(isChecked);
+            }
+        });
+
+        phoneCalls.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                profile.setPhoneCalls(isChecked);
+            }
+        });
+
+
 
     }
 

@@ -3,6 +3,7 @@ package com.estevez95gmail.f.primarynotifications;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
@@ -17,6 +18,7 @@ public class SmsListener extends BroadcastReceiver {
 
 
     final SmsManager sms = SmsManager.getDefault();
+
 
     public void onReceive(Context context, Intent intent) {
 
@@ -45,6 +47,8 @@ public class SmsListener extends BroadcastReceiver {
                     Toast toast = Toast.makeText(context,
                             "senderNum: "+ senderNum + ", message: " + message, duration);
                     toast.show();
+
+                    MainActivity.notificationRing();
 
                 } // end for loop
             } // bundle is null
