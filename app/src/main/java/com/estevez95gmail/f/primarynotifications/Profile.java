@@ -3,13 +3,14 @@ package com.estevez95gmail.f.primarynotifications;
 import android.view.View;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 /**
  * Contains the times and days of the week for this app to be active
  */
 public class Profile {
 
-    ArrayList<Contact> selected = new ArrayList<>();
+    ArrayList<Contact> contacts = new ArrayList<>();
     int startHour, endHour, startMinute, endMinute;
     String startTime, endTime;
     boolean monday, tuesday, wednesday, thursday, friday, saturday, sunday;
@@ -50,12 +51,12 @@ public class Profile {
         this.startHour = startHour;
     }
 
-    public ArrayList<Contact> getSelected() {
-        return selected;
+    public ArrayList<Contact> getContacts() {
+        return contacts;
     }
 
-    public void setSelected(ArrayList<Contact> selected) {
-        this.selected = selected;
+    public void setContacts(ArrayList<Contact> contacts) {
+        this.contacts = contacts;
     }
 
     public int getEndHour() {
@@ -165,4 +166,10 @@ public class Profile {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
+
+    public void addContact(Contact c){
+        contacts.add(c);
+    }
+
+
 }

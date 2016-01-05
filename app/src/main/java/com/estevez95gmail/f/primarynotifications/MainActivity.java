@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -27,6 +28,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -58,6 +60,7 @@ public class MainActivity extends ListActivity {
     final String readPhoneState = Manifest.permission.READ_PHONE_STATE;
     final String readExternalStorage = Manifest.permission.READ_EXTERNAL_STORAGE;
     final String readContacts = Manifest.permission.READ_CONTACTS;
+    static ProfileDBHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,12 +68,12 @@ public class MainActivity extends ListActivity {
 
         fa = this;
         context = getApplicationContext();
-
+        db = new ProfileDBHelper(this);
         super.onCreate(savedInstanceState);
         list = getListView();
 
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-
+        
         setContentView(R.layout.activity_main);
         ProfileAdapter adapter = new ProfileAdapter(list.getContext(), profiles);
         setListAdapter(adapter);
@@ -443,10 +446,24 @@ public class MainActivity extends ListActivity {
 
         audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
         Log.d("Ringer MODE NORMAL", "NORMAL MODE  " + AudioManager.RINGER_MODE_NORMAL);
-        Toast.makeText(context, "NOTIFYING", Toast.LENGTH_SHORT).show();
         audioManager.getStreamVolume(AudioManager.STREAM_RING);
         audioManager.setStreamVolume(AudioManager.STREAM_RING, maxVolume, AudioManager.FLAG_SHOW_UI + AudioManager.FLAG_PLAY_SOUND);
         ringtone.play();
+
+
+        MediaPlayer player = new MediaPlayer();
+        try {
+            player.setDataSource(context, notification);
+            player.prepare();
+           int duration  =  player.getDuration();
+            //create timer
+
+
+
+
+        }catch (IOException e){
+            //Error make timer last less
+        }
 
 
     }
