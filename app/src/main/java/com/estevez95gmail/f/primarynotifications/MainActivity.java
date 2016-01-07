@@ -343,64 +343,66 @@ public class MainActivity extends ListActivity {
 
         for (Profile p : profiles) {
             if (p.isEnabled()) {
-                Toast.makeText(getApplicationContext(), "Is Enabled", Toast.LENGTH_SHORT).show();
+                if(p.isPhoneCalls()) {
+                    Toast.makeText(getApplicationContext(), "Is Enabled", Toast.LENGTH_SHORT).show();
 
-                if (p.getStartHour() < hour && p.getEndHour() > hour) {
-                    Toast.makeText(getApplicationContext(), "Test 1", Toast.LENGTH_SHORT).show();
-
-                    for (Contact c : p.getContacts()) {
-                        if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
-                            Toast.makeText(getApplicationContext(), "TEST 1A", Toast.LENGTH_SHORT).show();
-
-                            // ring
-                            ring();
-                            return;
-                        }
-                    }
-                } else if (p.getStartHour() == hour && p.startHour == p.endHour) {
-                    Toast.makeText(getApplicationContext(), "Test 2", Toast.LENGTH_SHORT).show();
-
-                    if (p.getStartMinute() <= min && p.getEndMinute() >= min) {
-                        Toast.makeText(getApplicationContext(), "Test 21", Toast.LENGTH_SHORT).show();
+                    if (p.getStartHour() < hour && p.getEndHour() > hour) {
+                        Toast.makeText(getApplicationContext(), "Test 1", Toast.LENGTH_SHORT).show();
 
                         for (Contact c : p.getContacts()) {
                             if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
-                                Toast.makeText(getApplicationContext(), "Test 21A", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "TEST 1A", Toast.LENGTH_SHORT).show();
 
                                 // ring
                                 ring();
                                 return;
                             }
                         }
-                        //ring
-                    }
-                } else if (p.getStartHour() == hour) {
-                    Toast.makeText(getApplicationContext(), "Test 3", Toast.LENGTH_SHORT).show();
+                    } else if (p.getStartHour() == hour && p.startHour == p.endHour) {
+                        Toast.makeText(getApplicationContext(), "Test 2", Toast.LENGTH_SHORT).show();
 
-                    if (p.getStartMinute() <= min) {
-                        Toast.makeText(getApplicationContext(), "Test 3b", Toast.LENGTH_SHORT).show();
+                        if (p.getStartMinute() <= min && p.getEndMinute() >= min) {
+                            Toast.makeText(getApplicationContext(), "Test 21", Toast.LENGTH_SHORT).show();
 
-                        for (Contact c : p.getContacts()) {
-                            if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
-                                // ring
-                                ring();
-                                return;
+                            for (Contact c : p.getContacts()) {
+                                if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
+                                    Toast.makeText(getApplicationContext(), "Test 21A", Toast.LENGTH_SHORT).show();
+
+                                    // ring
+                                    ring();
+                                    return;
+                                }
                             }
+                            //ring
                         }
+                    } else if (p.getStartHour() == hour) {
+                        Toast.makeText(getApplicationContext(), "Test 3", Toast.LENGTH_SHORT).show();
 
-                        //ring
-                    }
-                } else if (p.getEndHour() == hour) {
-                    if (p.getEndMinute() >= min) {
+                        if (p.getStartMinute() <= min) {
+                            Toast.makeText(getApplicationContext(), "Test 3b", Toast.LENGTH_SHORT).show();
 
-                        for (Contact c : p.getContacts()) {
-                            if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
-                                // ring
-                                ring();
-                                return;
+                            for (Contact c : p.getContacts()) {
+                                if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
+                                    // ring
+                                    ring();
+                                    return;
+                                }
                             }
-                        }
 
+                            //ring
+                        }
+                    } else if (p.getEndHour() == hour) {
+                        if (p.getEndMinute() >= min) {
+
+                            for (Contact c : p.getContacts()) {
+                                if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
+                                    // ring
+                                    ring();
+                                    return;
+                                }
+                            }
+
+                        }
                     }
                 }
             }
