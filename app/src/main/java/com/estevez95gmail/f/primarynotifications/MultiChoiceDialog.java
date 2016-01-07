@@ -71,7 +71,6 @@ public class MultiChoiceDialog extends DialogFragment{
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         if(contact) {//We are selecting between contacts and not days
-            addContacts(MainActivity.contacts);
             builder.setTitle("Select Contacts")
 
 
@@ -230,12 +229,17 @@ public class MultiChoiceDialog extends DialogFragment{
         selectedItems = new boolean[contacts.size()];
         for(int i = 0; i < cons.length; i++){
             cons[i] = contacts.get(i).getName();
-            if(profile.getContacts().contains(contacts.get(i))){
-                selectedItems[i] = true;
-                mSelectedItems.add(contacts.get(i));
-            }else{
-                selectedItems[i] = false;
+            selectedItems[i] = false;
+
+            for(Contact c: profile.getContacts()){
+                if(c.equals(contacts.get(i))) {
+                    selectedItems[i] = true;
+                    mSelectedItems.add(contacts.get(i));
+                    break;
+                }
             }
+
+
         }
     }
 

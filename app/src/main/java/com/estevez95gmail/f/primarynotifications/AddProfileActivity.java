@@ -402,21 +402,13 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
 
 
     public void smsToggle(View v){
-        if(sms.isChecked()){
-            profile.setSms(true);
-        }else{
-            profile.setSms(false);
-        }
+        profile.setSms(sms.isChecked());
         checkSubmit();
 
     }
 
     public void phoneCallsToggle(View v){
-        if(phoneCalls.isChecked()){
-            profile.setPhoneCalls(true);
-        }else{
-            profile.setPhoneCalls(false);
-        }
+        profile.setPhoneCalls(phoneCalls.isChecked());
         checkSubmit();
     }
 
@@ -431,6 +423,8 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
         profile.setStartTime(startView.getText().toString());
         profile.setEndTime(endView.getText().toString());
         profile.setEnabled(true);
+        profile.setSms(sms.isChecked());
+        profile.setPhoneCalls(phoneCalls.isChecked());
         MainActivity.db.updateProfile(profile, id+1);
         MainActivity.fa.finish();
         Intent main = new Intent(AddProfileActivity.this, MainActivity.class);

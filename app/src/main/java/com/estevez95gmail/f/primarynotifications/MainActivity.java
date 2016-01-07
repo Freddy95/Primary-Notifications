@@ -290,7 +290,7 @@ public class MainActivity extends ListActivity {
     protected void onListItemClick(ListView l, View v, int position, long id) {
         selectedProfile = profiles.get(position);
 
-        Toast.makeText(getApplicationContext(), "Item " + position + " Was Selected", Toast.LENGTH_SHORT).show();
+        getContacts();
         Intent add = new Intent(this, AddProfileActivity.class);
         startActivity(add);
         super.onListItemClick(l, v, position, id);
@@ -299,7 +299,7 @@ public class MainActivity extends ListActivity {
     /**
      * gets the list of contacts from users phone
      */
-    public void getContacts() {
+    public void getContacts(){
         if (contacts != null)
             return;
         else
