@@ -83,6 +83,7 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
         profile.setEndTime(endView.getText().toString());
         profile.setEnabled(true);
         MainActivity.profiles.add(profile);
+        MainActivity.db.insertProfile(profile);
         MainActivity.fa.finish();
         Intent main = new Intent(AddProfileActivity.this, MainActivity.class);
         startActivity(main);
@@ -382,7 +383,7 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
      * If so, submit button enable.
      */
     public void checkSubmit(){
-        if(profile.getSelected().isEmpty()){
+        if(profile.getContacts().isEmpty()){
             submit.setEnabled(false);
             return;
         }if(!end || !start){
@@ -437,6 +438,8 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
     }
 
     public void deleteProfile(){
+        int id = MainActivity.profiles.indexOf(profile);
+        MainActivity.db.deleteProfile(id);
         MainActivity.profiles.remove(profile);
         MainActivity.fa.finish();
         Intent main = new Intent(AddProfileActivity.this, MainActivity.class);

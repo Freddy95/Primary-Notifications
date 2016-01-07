@@ -60,6 +60,8 @@ public class MainActivity extends ListActivity {
     final String readPhoneState = Manifest.permission.READ_PHONE_STATE;
     final String readExternalStorage = Manifest.permission.READ_EXTERNAL_STORAGE;
     final String readContacts = Manifest.permission.READ_CONTACTS;
+    final String writeExternalStorage = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+
     static ProfileDBHelper db;
 
     @Override
@@ -69,6 +71,8 @@ public class MainActivity extends ListActivity {
         fa = this;
         context = getApplicationContext();
         db = new ProfileDBHelper(this);
+
+        profiles = db.getAllProfiles();
         super.onCreate(savedInstanceState);
         list = getListView();
 
@@ -164,7 +168,8 @@ public class MainActivity extends ListActivity {
             if (checkSelfPermission(Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED &&
                     checkSelfPermission(Manifest.permission.RECEIVE_SMS) == PackageManager.PERMISSION_GRANTED &&
                     checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED &&
-                    checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                    checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                    checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                 //WE HAVE PERMISSIONS ABLE TO ADD PROFILE
                 getContacts();
                 Intent add = new Intent(this, AddProfileActivity.class);
@@ -218,12 +223,13 @@ public class MainActivity extends ListActivity {
                 if(readContacts.equals(permission))
                     Toast.makeText(this, "Need Access Contacts to get Contact List", Toast.LENGTH_SHORT).show();
                 else if(readExternalStorage.equals(permission))
-                    Toast.makeText(this, "Need Access to Files to get Ringtone", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Need Access to Storage to save and update profiles", Toast.LENGTH_SHORT).show();
                 else if(readPhoneState.equals(permission))
                     Toast.makeText(this, "Need Access to Phone to listen for Incoming Calls", Toast.LENGTH_SHORT).show();
                 else if(recieveSms.equals(permission))
                     Toast.makeText(this, "Need Access to SMS messages to listen for Incoming Messages", Toast.LENGTH_SHORT).show();
-
+                else if(writeExternalStorage.equals(permission))
+                    Toast.makeText(this, "Need Access to Storage to save profiles", Toast.LENGTH_SHORT).show();
 
 
             }
@@ -266,6 +272,10 @@ public class MainActivity extends ListActivity {
             }
             if (checkSelfPermission(Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED) {
                 askForPermissions(Manifest.permission.RECEIVE_SMS);
+            }
+            if(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+                askForPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
             }
         }
 
@@ -338,7 +348,7 @@ public class MainActivity extends ListActivity {
                 if (p.getStartHour() < hour && p.getEndHour() > hour) {
                     Toast.makeText(getApplicationContext(), "Test 1", Toast.LENGTH_SHORT).show();
 
-                    for (Contact c : p.getSelected()) {
+                    for (Contact c : p.getContacts()) {
                         if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
                             Toast.makeText(getApplicationContext(), "TEST 1A", Toast.LENGTH_SHORT).show();
 
@@ -353,7 +363,7 @@ public class MainActivity extends ListActivity {
                     if (p.getStartMinute() <= min && p.getEndMinute() >= min) {
                         Toast.makeText(getApplicationContext(), "Test 21", Toast.LENGTH_SHORT).show();
 
-                        for (Contact c : p.getSelected()) {
+                        for (Contact c : p.getContacts()) {
                             if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
                                 Toast.makeText(getApplicationContext(), "Test 21A", Toast.LENGTH_SHORT).show();
 
@@ -370,7 +380,7 @@ public class MainActivity extends ListActivity {
                     if (p.getStartMinute() <= min) {
                         Toast.makeText(getApplicationContext(), "Test 3b", Toast.LENGTH_SHORT).show();
 
-                        for (Contact c : p.getSelected()) {
+                        for (Contact c : p.getContacts()) {
                             if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
                                 // ring
                                 ring();
@@ -383,7 +393,7 @@ public class MainActivity extends ListActivity {
                 } else if (p.getEndHour() == hour) {
                     if (p.getEndMinute() >= min) {
 
-                        for (Contact c : p.getSelected()) {
+                        for (Contact c : p.getContacts()) {
                             if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
                                 // ring
                                 ring();
@@ -483,7 +493,7 @@ public class MainActivity extends ListActivity {
                     if (p.getStartHour() < hour && p.getEndHour() > hour) {
                         // Toast.makeText(getApplicationContext(), "Test 1", Toast.LENGTH_SHORT).show();
 
-                        for (Contact c : p.getSelected()) {
+                        for (Contact c : p.getContacts()) {
                             if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
                                 //Toast.makeText(getApplicationContext(), "TEST 1A", Toast.LENGTH_SHORT).show();
 
@@ -498,7 +508,7 @@ public class MainActivity extends ListActivity {
                         if (p.getStartMinute() <= min && p.getEndMinute() >= min) {
                             //Toast.makeText(getApplicationContext(), "Test 21", Toast.LENGTH_SHORT).show();
 
-                            for (Contact c : p.getSelected()) {
+                            for (Contact c : p.getContacts()) {
                                 if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
                                     //Toast.makeText(getApplicationContext(), "Test 21A", Toast.LENGTH_SHORT).show();
 
@@ -515,7 +525,7 @@ public class MainActivity extends ListActivity {
                         if (p.getStartMinute() <= min) {
                             //Toast.makeText(getApplicationContext(), "Test 3b", Toast.LENGTH_SHORT).show();
 
-                            for (Contact c : p.getSelected()) {
+                            for (Contact c : p.getContacts()) {
                                 if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
                                     // ring
                                     notificationRing();
@@ -528,7 +538,7 @@ public class MainActivity extends ListActivity {
                     } else if (p.getEndHour() == hour) {
                         if (p.getEndMinute() >= min) {
 
-                            for (Contact c : p.getSelected()) {
+                            for (Contact c : p.getContacts()) {
                                 if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
                                     // ring
                                     notificationRing();

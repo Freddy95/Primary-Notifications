@@ -171,5 +171,54 @@ public class Profile {
         contacts.add(c);
     }
 
+    public void setDays(boolean[] days){
+        if(days.length != 7)
+            return;
+        sunday = days[0];
+        monday = days[1];
+        tuesday = days[2];
+        wednesday = days[3];
+        thursday = days[4];
+        friday = days[5];
+        saturday = days[6];
+
+    }
+
+    public boolean[] getDays(){
+        boolean[] days = new boolean[7];
+        days[0] = sunday;
+        days[1] = monday;
+        days[2] = tuesday;
+        days[3] = wednesday;
+        days[4] = thursday;
+        days[5] = friday;
+        days[6] = saturday;
+
+
+        return days;
+    }
+
+
+    public ArrayList<String> getAllNames(){
+        ArrayList<String> names = new ArrayList<>();
+
+        for(int i = 0; i< contacts.size(); i++){
+            names.add(contacts.get(i).getName());
+        }
+
+        return names;
+    }
+
+    public ArrayList<String> getAllPhoneNumbers(){
+        ArrayList<String> phoneNumbers = new ArrayList<>();
+
+        for(int i = 0; i < contacts.size(); i++){
+            phoneNumbers.add(contacts.get(i).getPhoneNumber());
+        }
+
+        return phoneNumbers;
+    }
+
+
 
 }

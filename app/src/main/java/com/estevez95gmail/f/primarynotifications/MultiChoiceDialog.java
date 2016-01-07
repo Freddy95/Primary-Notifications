@@ -25,7 +25,7 @@ public class MultiChoiceDialog extends DialogFragment{
     //The days user has selected
     ArrayList<String> dSelectedItems;
     //All days
-    static String[] days = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+    static final String[] days = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
     boolean  selectedItems[];
 
@@ -83,9 +83,9 @@ public class MultiChoiceDialog extends DialogFragment{
                                     if (isChecked) {
                                         // If the user checked the item, add it to the selected items
                                         mSelectedItems.add(contacts.get(which));
-                                    } else if (mSelectedItems.contains(which)) {
+                                    } else if (mSelectedItems.contains(contacts.get(which))) {
                                         // Else, if the item is already in the array, remove it
-                                        mSelectedItems.remove(mSelectedItems.indexOf(which));
+                                        mSelectedItems.remove(mSelectedItems.indexOf(contacts.get(which)));
                                     }
                                 }
                             })
@@ -96,7 +96,7 @@ public class MultiChoiceDialog extends DialogFragment{
                             // User clicked OK, so save the mSelectedItems results somewhere
                             // or return them to the component that opened the dialog
 
-                            profile.setSelected(mSelectedItems);
+                            profile.setContacts(mSelectedItems);
                             mCallBack.onDialogDismissListener(2);
                             dismiss();
 
@@ -228,7 +228,7 @@ public class MultiChoiceDialog extends DialogFragment{
         selectedItems = new boolean[contacts.size()];
         for(int i = 0; i < cons.length; i++){
             cons[i] = contacts.get(i).getName();
-            if(profile.getSelected().contains(contacts.get(i))){
+            if(profile.getContacts().contains(contacts.get(i))){
                 selectedItems[i] = true;
                 mSelectedItems.add(contacts.get(i));
             }else{
