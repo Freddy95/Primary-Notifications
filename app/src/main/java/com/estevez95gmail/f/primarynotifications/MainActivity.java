@@ -71,8 +71,8 @@ public class MainActivity extends ListActivity {
         fa = this;
         context = getApplicationContext();
         db = new ProfileDBHelper(this);
+            profiles = db.getAllProfiles();
 
-        profiles = db.getAllProfiles();
         super.onCreate(savedInstanceState);
         list = getListView();
 

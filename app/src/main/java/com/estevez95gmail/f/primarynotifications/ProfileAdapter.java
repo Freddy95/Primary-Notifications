@@ -40,14 +40,14 @@ public class ProfileAdapter extends ArrayAdapter<Profile> {
             convertView = LayoutInflater.from(mContext).inflate(R.layout.profile_view, null);
             holder = new ViewHolder();
             holder.enabled = (CheckBox) convertView.findViewById(R.id.confirmBox);
-            holder.enabled.setChecked(true);
+            holder.enabled.setChecked(mProfiles.get(position).isEnabled());
             holder.enabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if(isChecked)
-                        mProfiles.get(position).setEnabled(true);
-                    else
-                        mProfiles.get(position).setEnabled(false);
+
+                        mProfiles.get(position).setEnabled(isChecked);
+                    MainActivity.db.updateProfile(mProfiles.get(position), position +1);
+
                 }
             });
             holder.endTime = (TextView) convertView.findViewById(R.id.endTime);

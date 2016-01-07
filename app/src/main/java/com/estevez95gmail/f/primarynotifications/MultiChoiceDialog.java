@@ -38,6 +38,8 @@ public class MultiChoiceDialog extends DialogFragment{
         public void onDialogDismissListener(int position);
     }
 
+
+
     public MultiChoiceDialog(Profile p, boolean contact) {
 
         //Profile to edit.
@@ -69,7 +71,7 @@ public class MultiChoiceDialog extends DialogFragment{
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         if(contact) {//We are selecting between contacts and not days
-
+            addContacts(MainActivity.contacts);
             builder.setTitle("Select Contacts")
 
 
@@ -85,7 +87,7 @@ public class MultiChoiceDialog extends DialogFragment{
                                         mSelectedItems.add(contacts.get(which));
                                     } else if (mSelectedItems.contains(contacts.get(which))) {
                                         // Else, if the item is already in the array, remove it
-                                        mSelectedItems.remove(mSelectedItems.indexOf(contacts.get(which)));
+                                        mSelectedItems.remove(contacts.get(which));
                                     }
                                 }
                             })

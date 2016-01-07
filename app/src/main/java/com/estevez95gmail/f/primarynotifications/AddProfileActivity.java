@@ -30,6 +30,7 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
     CheckBox sms;
     CheckBox phoneCalls;
     boolean editing;
+    int id;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -44,6 +45,7 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
             initHandlers();
         }else{//Editing selected profile
             profile = MainActivity.selectedProfile;
+            id = MainActivity.profiles.indexOf(profile);
             editing = true;
             initEdit();
             initEditHandlers();
@@ -82,7 +84,6 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
         profile.setStartTime(startView.getText().toString());
         profile.setEndTime(endView.getText().toString());
         profile.setEnabled(true);
-        MainActivity.profiles.add(profile);
         MainActivity.db.insertProfile(profile);
         MainActivity.fa.finish();
         Intent main = new Intent(AddProfileActivity.this, MainActivity.class);
@@ -218,23 +219,6 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
      */
     public void getContacts(){
 
-        /*try {
-            Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
-            while (phones.moveToNext()){
-                String name=phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-                String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                if(phoneNumber != null && !(phoneNumber.equals( ""))) {
-                    Contact newContact = new Contact(name, phoneNumber);
-
-                    contacts.add(newContact);
-                }
-            }
-            phones.close();
-            Collections.sort(contacts, Contact.contactNameComp);
-        } catch (RuntimeException e) {
-            Intent main = new Intent(AddProfileActivity.this, MainActivity.class);
-            startActivity(main);
-        }*/
         contacts = MainActivity.contacts;
     }
     /**
@@ -344,6 +328,21 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
                 deleteProfile();
             }
         });
+
+        sms.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                profile.setSms(isChecked);
+            }
+        });
+
+        phoneCalls.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                profile.setPhoneCalls(isChecked);
+            }
+        });
+
     }
 
     /**
@@ -431,6 +430,8 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
     public void finishEdit(){
         profile.setStartTime(startView.getText().toString());
         profile.setEndTime(endView.getText().toString());
+        profile.setEnabled(true);
+        MainActivity.db.updateProfile(profile, id+1);
         MainActivity.fa.finish();
         Intent main = new Intent(AddProfileActivity.this, MainActivity.class);
         startActivity(main);
@@ -438,9 +439,9 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
     }
 
     public void deleteProfile(){
-        int id = MainActivity.profiles.indexOf(profile);
-        MainActivity.db.deleteProfile(id);
-        MainActivity.profiles.remove(profile);
+        id = MainActivity.profiles.indexOf(profile);
+        MainActivity.db.deleteProfile(id+1);
+        MainActivity.profiles.remove(id);
         MainActivity.fa.finish();
         Intent main = new Intent(AddProfileActivity.this, MainActivity.class);
         startActivity(main);

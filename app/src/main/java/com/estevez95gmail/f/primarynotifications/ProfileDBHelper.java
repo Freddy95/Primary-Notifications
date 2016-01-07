@@ -24,7 +24,11 @@ public class ProfileDBHelper extends SQLiteOpenHelper {
     public static final String PROFILES_COLUMN_END_TIME_VIEW = "end_time_view";
     public static final String PROFILES_COLUMN_ENABLED = "enabled";
     public static final String PROFILES_COLUMN_DAYS = "days";
+    public static final String PROFILES_COLUMN_PHONECALLS = "phone_calls";
+    public static final String PROFILES_COLUMN_SMS = "sms";
     public static final String strSeparator = "__,__";
+    public static final String PROFILES_TRUE = "True";
+    public static final String PROFILES_FALSE = "False";
 
 
 
@@ -38,7 +42,8 @@ public class ProfileDBHelper extends SQLiteOpenHelper {
         db.execSQL(
                 "create table profiles " +
                         "(id integer primary key, name text, phone_number text, start_time text" +
-                        ", end_time text, days text, start_time_view text, end_time_view text, enabled )"
+                        ", end_time text, days text, start_time_view text, end_time_view text, enabled text," +
+                        " phone_calls text, sms text)"
         );
     }
 
@@ -74,9 +79,16 @@ public class ProfileDBHelper extends SQLiteOpenHelper {
 
         String startTimeView = profile.getStartTime();
         String endTimeView = profile.getEndTime();
-        String enabled = "false";
+        String enabled = PROFILES_FALSE;
+        String sms = PROFILES_FALSE;
+        String phoneCalls = PROFILES_FALSE;
         if(profile.isEnabled())
             enabled = "True";
+        if(profile.isPhoneCalls())
+            phoneCalls = PROFILES_TRUE;
+        if(profile.isSms())
+            sms = PROFILES_TRUE;
+
 
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -88,6 +100,8 @@ public class ProfileDBHelper extends SQLiteOpenHelper {
         contentValues.put(PROFILES_COLUMN_START_TIME_VIEW, startTimeView);
         contentValues.put(PROFILES_COLUMN_END_TIME_VIEW, endTimeView);
         contentValues.put(PROFILES_COLUMN_ENABLED, enabled);
+        contentValues.put(PROFILES_COLUMN_PHONECALLS, phoneCalls);
+        contentValues.put(PROFILES_COLUMN_SMS, sms);
 
         db.insert("profiles", null, contentValues);
         return true;
@@ -106,7 +120,6 @@ public class ProfileDBHelper extends SQLiteOpenHelper {
     }
 
     public boolean updateProfile(Profile profile, int id) {
-
 
 
         String n = convertArrayListToString(profile.getAllNames());
@@ -132,9 +145,16 @@ public class ProfileDBHelper extends SQLiteOpenHelper {
 
         String startTimeView = profile.getStartTime();
         String endTimeView = profile.getEndTime();
-        String enabled = "false";
+        String enabled = PROFILES_FALSE;
+        String sms = PROFILES_FALSE;
+        String phoneCalls = PROFILES_FALSE;
         if(profile.isEnabled())
-            enabled = "True";
+            enabled = PROFILES_TRUE;
+        if(profile.isPhoneCalls())
+            phoneCalls = PROFILES_TRUE;
+        if(profile.isSms())
+            sms = PROFILES_TRUE;
+
 
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -146,6 +166,8 @@ public class ProfileDBHelper extends SQLiteOpenHelper {
         contentValues.put(PROFILES_COLUMN_START_TIME_VIEW, startTimeView);
         contentValues.put(PROFILES_COLUMN_END_TIME_VIEW, endTimeView);
         contentValues.put(PROFILES_COLUMN_ENABLED, enabled);
+        contentValues.put(PROFILES_COLUMN_PHONECALLS, phoneCalls);
+        contentValues.put(PROFILES_COLUMN_SMS, sms);
 
 
         db.update("profiles", contentValues, "id = ? ", new String[]{Integer.toString(id)});
@@ -176,14 +198,16 @@ public class ProfileDBHelper extends SQLiteOpenHelper {
             String endTimeView = res.getString(res.getColumnIndex(PROFILES_COLUMN_END_TIME_VIEW));
             ArrayList<String> days = convertStringToArrayList(res.getString(res.getColumnIndex(PROFILES_COLUMN_DAYS)));
             String enabled = res.getString(res.getColumnIndex(PROFILES_COLUMN_ENABLED));
-            boolean e = false;
-            if(enabled.equals("True"))
-                e = true;
+            String phoneCalls = res.getString(res.getColumnIndex(PROFILES_COLUMN_PHONECALLS));
+            String sms = res.getString(res.getColumnIndex(PROFILES_COLUMN_SMS));
 
             Profile profile = new Profile();
 
             profile.setDays(convertDaysToBoolean(days));
-            profile.setEnabled(e);
+            profile.setEnabled(enabled.equals(PROFILES_TRUE));
+            profile.setPhoneCalls(phoneCalls.equals(PROFILES_TRUE));
+            profile.setSms(sms.equals(PROFILES_TRUE));
+
             int startHour = Integer.valueOf(startTimes.get(0));
             int startMin = Integer.valueOf(startTimes.get(1));
             int endHour = Integer.valueOf(endTimes.get(0));
