@@ -14,6 +14,7 @@ import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.CountDownTimer;
 import android.provider.ContactsContract;
 
 import android.os.Bundle;
@@ -54,7 +55,6 @@ public class MainActivity extends ListActivity {
     static Context context;
 
     final private int REQUEST_PERMISSIONS = 123;
-    static SmsListener listener;
 
     final String recieveSms = Manifest.permission.READ_SMS;
     final String readPhoneState = Manifest.permission.READ_PHONE_STATE;
@@ -71,13 +71,13 @@ public class MainActivity extends ListActivity {
         fa = this;
         context = getApplicationContext();
         db = new ProfileDBHelper(this);
-            profiles = db.getAllProfiles();
+        profiles = db.getAllProfiles();
 
         super.onCreate(savedInstanceState);
         list = getListView();
 
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        
+
         setContentView(R.layout.activity_main);
         ProfileAdapter adapter = new ProfileAdapter(list.getContext(), profiles);
         setListAdapter(adapter);
@@ -98,7 +98,7 @@ public class MainActivity extends ListActivity {
                         checkToRing(number);
                     }
                     if (state == TelephonyManager.CALL_STATE_OFFHOOK) {
-                        if(audioManager != null) {
+                        if (audioManager != null) {
 
                             if (ringtone != null) {
                                 ringtone.stop();
@@ -220,15 +220,15 @@ public class MainActivity extends ListActivity {
         if (Build.VERSION.SDK_INT >= 23) {
             // Check for Rationale Option
             if (!shouldShowRequestPermissionRationale(permission)) {
-                if(readContacts.equals(permission))
+                if (readContacts.equals(permission))
                     Toast.makeText(this, "Need Access Contacts to get Contact List", Toast.LENGTH_SHORT).show();
-                else if(readExternalStorage.equals(permission))
+                else if (readExternalStorage.equals(permission))
                     Toast.makeText(this, "Need Access to Storage to save and update profiles", Toast.LENGTH_SHORT).show();
-                else if(readPhoneState.equals(permission))
+                else if (readPhoneState.equals(permission))
                     Toast.makeText(this, "Need Access to Phone to listen for Incoming Calls", Toast.LENGTH_SHORT).show();
-                else if(recieveSms.equals(permission))
+                else if (recieveSms.equals(permission))
                     Toast.makeText(this, "Need Access to SMS messages to listen for Incoming Messages", Toast.LENGTH_SHORT).show();
-                else if(writeExternalStorage.equals(permission))
+                else if (writeExternalStorage.equals(permission))
                     Toast.makeText(this, "Need Access to Storage to save profiles", Toast.LENGTH_SHORT).show();
 
 
@@ -273,7 +273,7 @@ public class MainActivity extends ListActivity {
             if (checkSelfPermission(Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED) {
                 askForPermissions(Manifest.permission.RECEIVE_SMS);
             }
-            if(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                 askForPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
             }
@@ -299,7 +299,7 @@ public class MainActivity extends ListActivity {
     /**
      * gets the list of contacts from users phone
      */
-    public void getContacts(){
+    public void getContacts() {
         if (contacts != null)
             return;
         else
@@ -320,9 +320,9 @@ public class MainActivity extends ListActivity {
             Collections.sort(contacts, Contact.contactNameComp);
             ArrayList<Contact> con = contacts;
             int size = contacts.size();
-            for(int i = 0; i < size-1; i++){
-                if(contacts.get(i).getName().equals(contacts.get(i+1).getName())){
-                    if(contacts.get(i).getPhoneNumber().equals(contacts.get(i+1).getPhoneNumber())){
+            for (int i = 0; i < size - 1; i++) {
+                if (contacts.get(i).getName().equals(contacts.get(i + 1).getName())) {
+                    if (contacts.get(i).getPhoneNumber().equals(contacts.get(i + 1).getPhoneNumber())) {
                         con.remove(i); // if contact has same number and name remove from list
                         size--;
                     }
@@ -339,69 +339,72 @@ public class MainActivity extends ListActivity {
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int min = calendar.get(Calendar.MINUTE);
+        int day = calendar.get(Calendar.DAY_OF_WEEK);
 
 
         for (Profile p : profiles) {
             if (p.isEnabled()) {
-                if(p.isPhoneCalls()) {
-                    Toast.makeText(getApplicationContext(), "Is Enabled", Toast.LENGTH_SHORT).show();
+                if(p.getDays()[day-1]) {
+                    if (p.isPhoneCalls()) {
+                        Toast.makeText(getApplicationContext(), "Is Enabled", Toast.LENGTH_SHORT).show();
 
-                    if (p.getStartHour() < hour && p.getEndHour() > hour) {
-                        Toast.makeText(getApplicationContext(), "Test 1", Toast.LENGTH_SHORT).show();
-
-                        for (Contact c : p.getContacts()) {
-                            if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
-                                Toast.makeText(getApplicationContext(), "TEST 1A", Toast.LENGTH_SHORT).show();
-
-                                // ring
-                                ring();
-                                return;
-                            }
-                        }
-                    } else if (p.getStartHour() == hour && p.startHour == p.endHour) {
-                        Toast.makeText(getApplicationContext(), "Test 2", Toast.LENGTH_SHORT).show();
-
-                        if (p.getStartMinute() <= min && p.getEndMinute() >= min) {
-                            Toast.makeText(getApplicationContext(), "Test 21", Toast.LENGTH_SHORT).show();
+                        if (p.getStartHour() < hour && p.getEndHour() > hour) {
+                            Toast.makeText(getApplicationContext(), "Test 1", Toast.LENGTH_SHORT).show();
 
                             for (Contact c : p.getContacts()) {
                                 if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
-                                    Toast.makeText(getApplicationContext(), "Test 21A", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), "TEST 1A", Toast.LENGTH_SHORT).show();
 
                                     // ring
                                     ring();
                                     return;
                                 }
                             }
-                            //ring
-                        }
-                    } else if (p.getStartHour() == hour) {
-                        Toast.makeText(getApplicationContext(), "Test 3", Toast.LENGTH_SHORT).show();
+                        } else if (p.getStartHour() == hour && p.startHour == p.endHour) {
+                            Toast.makeText(getApplicationContext(), "Test 2", Toast.LENGTH_SHORT).show();
 
-                        if (p.getStartMinute() <= min) {
-                            Toast.makeText(getApplicationContext(), "Test 3b", Toast.LENGTH_SHORT).show();
+                            if (p.getStartMinute() <= min && p.getEndMinute() >= min) {
+                                Toast.makeText(getApplicationContext(), "Test 21", Toast.LENGTH_SHORT).show();
 
-                            for (Contact c : p.getContacts()) {
-                                if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
-                                    // ring
-                                    ring();
-                                    return;
+                                for (Contact c : p.getContacts()) {
+                                    if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
+                                        Toast.makeText(getApplicationContext(), "Test 21A", Toast.LENGTH_SHORT).show();
+
+                                        // ring
+                                        ring();
+                                        return;
+                                    }
                                 }
+                                //ring
                             }
+                        } else if (p.getStartHour() == hour) {
+                            Toast.makeText(getApplicationContext(), "Test 3", Toast.LENGTH_SHORT).show();
 
-                            //ring
-                        }
-                    } else if (p.getEndHour() == hour) {
-                        if (p.getEndMinute() >= min) {
+                            if (p.getStartMinute() <= min) {
+                                Toast.makeText(getApplicationContext(), "Test 3b", Toast.LENGTH_SHORT).show();
 
-                            for (Contact c : p.getContacts()) {
-                                if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
-                                    // ring
-                                    ring();
-                                    return;
+                                for (Contact c : p.getContacts()) {
+                                    if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
+                                        // ring
+                                        ring();
+                                        return;
+                                    }
                                 }
-                            }
 
+                                //ring
+                            }
+                        } else if (p.getEndHour() == hour) {
+                            if (p.getEndMinute() >= min) {
+
+                                for (Contact c : p.getContacts()) {
+                                    if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
+                                        // ring
+                                        ring();
+                                        return;
+                                    }
+                                }
+
+                            }
                         }
                     }
                 }
@@ -410,48 +413,46 @@ public class MainActivity extends ListActivity {
     }
 
     public void ring() {
-        if(audioManager == null)
+        if (audioManager == null)
             audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
-        if(!playing) {
-                Toast.makeText(getApplicationContext(), "Ringing", Toast.LENGTH_SHORT).show();
+        if (!playing) {
+            Toast.makeText(getApplicationContext(), "Ringing", Toast.LENGTH_SHORT).show();
 
-                Log.d("Org", "Original " + audioManager.getRingerMode());
-                originalRingerMode = audioManager.getRingerMode();
-                if(originalRingerMode == 2){
-                    volume = audioManager.getStreamVolume(AudioManager.STREAM_RING);
-                }
-                Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
-                Ringtone ringtone = RingtoneManager.getRingtone(getApplicationContext(), notification);
-
-
-
-                int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_RING);
-
-                audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-                Log.d("Ringer MODE NORMAL", "NORMAL MODE  " + AudioManager.RINGER_MODE_NORMAL);
-                audioManager.getStreamVolume(AudioManager.STREAM_RING);
-                audioManager.setStreamVolume(AudioManager.STREAM_RING, maxVolume, AudioManager.FLAG_SHOW_UI + AudioManager.FLAG_PLAY_SOUND);
-                ringtone.play();
-                playing = true;
+            Log.d("Org", "Original " + audioManager.getRingerMode());
+            originalRingerMode = audioManager.getRingerMode();
+            if (originalRingerMode == 2) {
+                volume = audioManager.getStreamVolume(AudioManager.STREAM_RING);
             }
+            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+            Ringtone ringtone = RingtoneManager.getRingtone(getApplicationContext(), notification);
+
+
+            int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_RING);
+
+            audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+            Log.d("Ringer MODE NORMAL", "NORMAL MODE  " + AudioManager.RINGER_MODE_NORMAL);
+            audioManager.getStreamVolume(AudioManager.STREAM_RING);
+            audioManager.setStreamVolume(AudioManager.STREAM_RING, maxVolume, AudioManager.FLAG_SHOW_UI + AudioManager.FLAG_PLAY_SOUND);
+            ringtone.play();
+            playing = true;
+        }
 
 
     }
 
 
-    public  static void notificationRing(){
+    public static void notificationRing() {
         //Toast.makeText(getApplicationContext(), "Ringing", Toast.LENGTH_SHORT).show();
 
         Log.d("Org", "Original " + audioManager.getRingerMode());
 
         originalRingerMode = audioManager.getRingerMode();
-        if(originalRingerMode == 2){
+        if (originalRingerMode == 2) {
             volume = audioManager.getStreamVolume(AudioManager.STREAM_RING);
         }
         Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-         ringtone = RingtoneManager.getRingtone(context, notification);
-
+        ringtone = RingtoneManager.getRingtone(context, notification);
 
 
         int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_RING);
@@ -467,87 +468,103 @@ public class MainActivity extends ListActivity {
         try {
             player.setDataSource(context, notification);
             player.prepare();
-           int duration  =  player.getDuration();
+            int duration = player.getDuration();
             //create timer
+            CountDownTimer timer = new CountDownTimer(duration, 1) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+
+                }
+
+                @Override
+                public void onFinish() {
+                    ringtone.stop();
+                    audioManager.setRingerMode(originalRingerMode);
+                    if(originalRingerMode == 2)
+                        audioManager.setStreamVolume(AudioManager.STREAM_RING, volume, AudioManager.FLAG_SHOW_UI);
+                }
+            };
 
 
-
-
-        }catch (IOException e){
+        } catch (IOException e) {
             //Error make timer last less
+
+            CountDownTimer timer = new CountDownTimer(1000, 1) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+
+                }
+
+                @Override
+                public void onFinish() {
+                    ringtone.stop();
+                    audioManager.setRingerMode(originalRingerMode);
+                    if(originalRingerMode == 2)
+                        audioManager.setStreamVolume(AudioManager.STREAM_RING, volume, AudioManager.FLAG_SHOW_UI);
+                }
+            };
         }
 
 
     }
 
-    public static   void checkToNotify(String phoneNumber){
+    public static void checkToNotify(String phoneNumber) {
 
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int min = calendar.get(Calendar.MINUTE);
+        int day = calendar.get(Calendar.DAY_OF_WEEK);
 
 
         for (Profile p : profiles) {
             if (p.isEnabled()) {
-                if(p.isSms()) {
-                    // Toast.makeText(getApplicationContext(), "Is Enabled", Toast.LENGTH_SHORT).show();
+                if (p.getDays()[day-1]) {// if current day is one of the days user selected
+                    if (p.isSms()) {
 
-                    if (p.getStartHour() < hour && p.getEndHour() > hour) {
-                        // Toast.makeText(getApplicationContext(), "Test 1", Toast.LENGTH_SHORT).show();
-
-                        for (Contact c : p.getContacts()) {
-                            if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
-                                //Toast.makeText(getApplicationContext(), "TEST 1A", Toast.LENGTH_SHORT).show();
-
-                                // ring
-                                notificationRing();
-                                return;
-                            }
-                        }
-                    } else if (p.getStartHour() == hour && p.startHour == p.endHour) {
-                        //Toast.makeText(getApplicationContext(), "Test 2", Toast.LENGTH_SHORT).show();
-
-                        if (p.getStartMinute() <= min && p.getEndMinute() >= min) {
-                            //Toast.makeText(getApplicationContext(), "Test 21", Toast.LENGTH_SHORT).show();
+                        if (p.getStartHour() < hour && p.getEndHour() > hour) {
 
                             for (Contact c : p.getContacts()) {
                                 if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
-                                    //Toast.makeText(getApplicationContext(), "Test 21A", Toast.LENGTH_SHORT).show();
 
-                                    // ring
                                     notificationRing();
                                     return;
                                 }
                             }
-                            //ring
-                        }
-                    } else if (p.getStartHour() == hour) {
-                        //Toast.makeText(getApplicationContext(), "Test 3", Toast.LENGTH_SHORT).show();
+                        } else if (p.getStartHour() == hour && p.startHour == p.endHour) {
 
-                        if (p.getStartMinute() <= min) {
-                            //Toast.makeText(getApplicationContext(), "Test 3b", Toast.LENGTH_SHORT).show();
+                            if (p.getStartMinute() <= min && p.getEndMinute() >= min) {
 
-                            for (Contact c : p.getContacts()) {
-                                if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
-                                    // ring
-                                    notificationRing();
-                                    return;
+                                for (Contact c : p.getContacts()) {
+                                    if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
+
+                                        notificationRing();
+                                        return;
+                                    }
                                 }
                             }
+                        } else if (p.getStartHour() == hour) {
 
-                            //ring
-                        }
-                    } else if (p.getEndHour() == hour) {
-                        if (p.getEndMinute() >= min) {
+                            if (p.getStartMinute() <= min) {
 
-                            for (Contact c : p.getContacts()) {
-                                if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
-                                    // ring
-                                    notificationRing();
-                                    return;
+                                for (Contact c : p.getContacts()) {
+                                    if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
+                                        notificationRing();
+                                        return;
+                                    }
                                 }
-                            }
 
+                            }
+                        } else if (p.getEndHour() == hour) {
+                            if (p.getEndMinute() >= min) {
+
+                                for (Contact c : p.getContacts()) {
+                                    if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
+                                        notificationRing();
+                                        return;
+                                    }
+                                }
+
+                            }
                         }
                     }
                 }

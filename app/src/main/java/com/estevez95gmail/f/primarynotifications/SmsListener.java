@@ -36,19 +36,8 @@ public class SmsListener extends BroadcastReceiver {
                     SmsMessage currentMessage = SmsMessage.createFromPdu((byte[]) pdusObj[i]);
                     String phoneNumber = currentMessage.getDisplayOriginatingAddress();
 
-                    String senderNum = phoneNumber;
-                    String message = currentMessage.getDisplayMessageBody();
 
-                    Log.i("SmsReceiver", "senderNum: "+ senderNum + "; message: " + message);
-
-
-                    // Show Alert
-                    int duration = Toast.LENGTH_LONG;
-                    Toast toast = Toast.makeText(context,
-                            "senderNum: "+ senderNum + ", message: " + message, duration);
-                    toast.show();
-
-                    MainActivity.notificationRing();
+                    MainActivity.checkToNotify(phoneNumber);
 
                 } // end for loop
             } // bundle is null
