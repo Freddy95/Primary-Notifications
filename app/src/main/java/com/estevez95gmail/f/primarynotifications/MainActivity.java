@@ -311,7 +311,13 @@ public class MainActivity extends ListActivity {
             while (phones.moveToNext()) {
                 String name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
                 String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                if (phoneNumber != null && !(phoneNumber.equals("")) && !(phoneNumber.contains("-"))) {
+                if (phoneNumber != null && !(phoneNumber.equals(""))) {
+                    while(phoneNumber.contains("-")){
+                        int ind = phoneNumber.indexOf("-");
+                        String s = phoneNumber.substring(0, ind);
+                        String t = phoneNumber.substring(ind+1, phoneNumber.length());
+                        phoneNumber = s + t;
+                    }
 
                     Contact newContact = new Contact(name, phoneNumber);
 

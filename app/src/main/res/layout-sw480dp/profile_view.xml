@@ -11,7 +11,7 @@
         android:text="Start Time"
         android:id="@+id/startTime"
         android:layout_margin="15dp"
-        android:textSize="20sp"
+        android:textSize="25sp"
         android:textColor="#3399FF"/>
 
     <CheckBox
@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="End Time"
-        android:textSize="20sp"
+        android:textSize="25sp"
         android:id="@+id/endTime"
         android:layout_gravity="center_horizontal|top"
         android:layout_alignTop="@+id/startTime"
@@ -47,7 +47,7 @@
         android:layout_alignBottom="@id/startTime"
         android:layout_toRightOf="@id/startTime"
         android:layout_marginLeft="1dp"
-        android:textSize="20sp"/>
+        android:textSize="25sp"/>
 
 
 
@@ -60,7 +60,7 @@
         android:layout_below="@id/startTime"
         android:layout_alignLeft="@+id/startTime"
         android:layout_alignStart="@+id/startTime"
-        android:textSize="13sp" />
+        android:textSize="16sp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -68,12 +68,12 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="Mo"
         android:id="@+id/Mon"
-        android:layout_marginLeft="15dp"
+        android:layout_marginLeft="20dp"
         android:layout_marginStart="10dp"
         android:layout_alignTop="@+id/Sun"
         android:layout_toRightOf="@+id/Sun"
         android:layout_toEndOf="@+id/Sun"
-        android:textSize="13sp" />
+        android:textSize="16sp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -84,9 +84,9 @@
         android:layout_alignTop="@+id/Sun"
         android:layout_toRightOf="@+id/Mon"
         android:layout_toEndOf="@+id/Mon"
-        android:layout_marginLeft="15dp"
+        android:layout_marginLeft="20dp"
         android:layout_marginStart="10dp"
-        android:textSize="13sp" />
+        android:textSize="16sp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -97,9 +97,9 @@
         android:layout_alignTop="@+id/Sun"
         android:layout_toRightOf="@+id/Tue"
         android:layout_toEndOf="@+id/Tue"
-        android:layout_marginLeft="15dp"
+        android:layout_marginLeft="20dp"
         android:layout_marginStart="10dp"
-        android:textSize="13sp" />
+        android:textSize="16sp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -110,9 +110,9 @@
         android:layout_alignTop="@+id/Sun"
         android:layout_toRightOf="@+id/Wed"
         android:layout_toEndOf="@+id/Wed"
-        android:layout_marginLeft="15dp"
+        android:layout_marginLeft="20dp"
         android:layout_marginStart="10dp"
-        android:textSize="13sp" />
+        android:textSize="16sp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -123,9 +123,9 @@
         android:layout_alignTop="@+id/Sun"
         android:layout_toRightOf="@+id/Thur"
         android:layout_toEndOf="@+id/Thur"
-        android:layout_marginLeft="15dp"
+        android:layout_marginLeft="20dp"
         android:layout_marginStart="10dp"
-        android:textSize="13sp" />
+        android:textSize="16sp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -136,9 +136,9 @@
         android:layout_alignTop="@+id/Sun"
         android:layout_toRightOf="@+id/Fri"
         android:layout_toEndOf="@+id/Fri"
-        android:layout_marginLeft="15dp"
+        android:layout_marginLeft="20dp"
         android:layout_marginStart="10dp"
-        android:textSize="13sp" />
+        android:textSize="16sp" />
 
 
 

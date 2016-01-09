@@ -228,6 +228,7 @@ public class ProfileDBHelper extends SQLiteOpenHelper {
             array_list.add(profile);
             res.moveToNext();
         }
+        res.close();
         return array_list;
 
 
