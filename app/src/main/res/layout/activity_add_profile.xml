@@ -46,7 +46,9 @@
             android:layout_gravity="left|bottom"
             android:textSize="20dp"
             android:textColor="#000000"
-            android:layout_alignParentBottom="true"/>
+            android:layout_alignTop="@+id/submit_prof"
+            android:layout_alignRight="@+id/selectDays"
+            android:layout_alignEnd="@+id/selectDays" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -56,9 +58,9 @@
             android:textColor="#000000"
             android:layout_gravity="bottom|right"
             android:clickable="true"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true" />
+            android:layout_centerVertical="true"
+            android:layout_alignRight="@+id/setEndTime"
+            android:layout_alignEnd="@+id/setEndTime" />
 
         <TextView
             android:layout_width="wrap_content"

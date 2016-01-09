@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- the theme applied to the application or activity -->
+
+    <style name="custom_Action" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">#FF0000</item>
+    </style>
+
+    <style name="Base" parent="android:Theme.Holo.Light.DarkActionBar"></style>
+
+    <style name="AppTheme" parent="Base">
+        <!-- Main theme colors -->
+
+        <!--   theme UI controls like checkboxes and text fields -->
+        <item name="android:textColorPrimary">#FFFFFF</item>
+
+    </style>
+    <style name="ProfileActivityTheme" parent="Theme.AppCompat.Light">
+        <item name="android:textColorPrimary">#000000</item>
+        <item name="android:color">#FF471A</item>
+
+    </style>
+
+</resources>

@@ -1,5 +1,6 @@
 package com.estevez95gmail.f.primarynotifications;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -74,12 +75,13 @@ public class MainActivity extends ListActivity {
         profiles = db.getAllProfiles();
 
         super.onCreate(savedInstanceState);
-        list = getListView();
+       // list = getListView();
 
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 
         setContentView(R.layout.activity_main);
-        ProfileAdapter adapter = new ProfileAdapter(list.getContext(), profiles);
+
+        ProfileAdapter adapter = new ProfileAdapter(getListView().getContext(), profiles);
         setListAdapter(adapter);
 
 
