@@ -14,7 +14,7 @@
             android:clickable="true"
             android:onClick="showStartTime"
             android:layout_gravity="left|top"
-            android:textSize="20dp"
+            android:textSize="@dimen/ProfileActivityTextSize"
             android:textColor="#3399FF"
             android:layout_marginTop="25dp"
             android:layout_alignLeft="@+id/selectContacts"
@@ -30,7 +30,7 @@
             android:paddingRight="0dp"
             android:textSize="20dp"
             android:clickable="true"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="@dimen/ProfileActivityMarginTop"
             android:onClick="showEndTime"
             android:textColor="#FF3300"
             android:layout_alignParentTop="true"
@@ -60,7 +60,7 @@
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginRight="50dp"/>
+            android:layout_marginRight="@dimen/ProfileActivityButtonMargin"/>
 
         <TextView
             android:layout_width="wrap_content"

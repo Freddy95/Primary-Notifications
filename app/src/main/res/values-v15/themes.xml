@@ -12,13 +12,32 @@
         <!-- Main theme colors -->
 
         <!--   theme UI controls like checkboxes and text fields -->
-        <item name="android:textColorPrimary">#FFFFFF</item>
+        <item name="android:textColorPrimary">#000000</item>
+        <item name="android:actionBarStyle">@style/MyActionBarStyle</item>
 
     </style>
-    <style name="ProfileActivityTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="android:textColorPrimary">#000000</item>
-        <item name="android:color">#FF471A</item>
 
+    <style name="MyActionBarStyle" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">#FF471A</item>
+        <item name="android:textColorPrimary">#FFFFFF</item>
+    </style>
+
+    <color name="actionBarColor">#FF471A</color>
+
+    <style name="ProfileActivityTheme" parent="Theme.AppCompat.Light">
+
+        <item name="android:actionBarStyle">@style/ProfileActionBar</item>
+        <item name="actionBarStyle">@style/ProfileActionBar</item>
+
+        <item name="android:textColorPrimary">#FFFFFF</item>
+
+
+    </style>
+
+    <style name="ProfileActionBar" parent="@style/Widget.AppCompat.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">#FF471A</item>
+        <item name="background">@color/actionBarColor</item>
+        <item name="android:textColorPrimary">#FFFFFF</item>
     </style>
 
 </resources>

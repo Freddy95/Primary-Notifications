@@ -363,8 +363,10 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
                 min = "" + startMin;
             if(startHour > 11)
                 startView.setText(((startHour%13)+(startHour/13)) + ":" + min + " PM");
-            else
+            else if(startHour > 0)
                 startView.setText(startHour + ":" + min + " AM");
+            else
+                startView.setText("12:" + min + " AM");
         }else{
             if(endMin < 10)
                 min = "0" + endMin;
@@ -372,8 +374,10 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
                 min = "" + endMin;
             if(endHour > 11)
                 endView.setText(((endHour%13)+(endHour/13)) + ":" + min + " PM");
-            else
+            else if(endHour > 0)
                 endView.setText(endHour + ":" + min + " AM");
+            else
+                endView.setText("12:" + min + " AM");
         }
     }
 

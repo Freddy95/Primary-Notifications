@@ -79,6 +79,7 @@ public class ProfileAdapter extends ArrayAdapter<Profile> {
             SpannableString content = new SpannableString(holder.mon.getText());
             content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
             holder.mon.setText(content);
+            holder.mon.setTextColor(Color.RED);
         }
 
         if(!(currentProfile.isTuesday())){
@@ -87,6 +88,7 @@ public class ProfileAdapter extends ArrayAdapter<Profile> {
             SpannableString content = new SpannableString(holder.tue.getText());
             content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
             holder.tue.setText(content);
+            holder.tue.setTextColor(Color.RED);
         }
 
         if(!(currentProfile.isWednesday())){
@@ -95,6 +97,7 @@ public class ProfileAdapter extends ArrayAdapter<Profile> {
             SpannableString content = new SpannableString(holder.wed.getText());
             content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
             holder.wed.setText(content);
+            holder.wed.setTextColor(Color.RED);
         }
 
         if(!(currentProfile.isThursday())){
@@ -103,6 +106,7 @@ public class ProfileAdapter extends ArrayAdapter<Profile> {
             SpannableString content = new SpannableString(holder.thur.getText());
             content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
             holder.thur.setText(content);
+            holder.thur.setTextColor(Color.RED);
         }
 
         if(!(currentProfile.isFriday())){
@@ -111,6 +115,7 @@ public class ProfileAdapter extends ArrayAdapter<Profile> {
             SpannableString content = new SpannableString(holder.fri.getText());
             content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
             holder.fri.setText(content);
+            holder.fri.setTextColor(Color.RED);
         }
 
         if(!(currentProfile.isSaturday())){
@@ -119,6 +124,7 @@ public class ProfileAdapter extends ArrayAdapter<Profile> {
             SpannableString content = new SpannableString(holder.sat.getText());
             content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
             holder.sat.setText(content);
+            holder.sat.setTextColor(Color.RED);
         }
 
         if(!(currentProfile.isSunday())){
@@ -127,6 +133,7 @@ public class ProfileAdapter extends ArrayAdapter<Profile> {
             SpannableString content = new SpannableString(holder.sun.getText());
             content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
             holder.sun.setText(content);
+            holder.sun.setTextColor(Color.RED);
         }
 
         return convertView;

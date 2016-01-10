@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="TimeViewSize">25sp</dimen>
+    <dimen name="DayViewSize">16sp</dimen>
+    <dimen name="SpaceBetweenDays">20dp</dimen>
+    <dimen name="FrameMargin">16dp</dimen>
+    <dimen name="ProfileTextSize">20sp</dimen>
+    <dimen name="ProfileActivityTextSize">20sp</dimen>
+    <dimen name="ProfileActivityMarginTop">25dp</dimen>
+    <dimen name="ProfileActivityButtonMargin">50dp</dimen>
+    <dimen name="CheckBoxMargin">15dp</dimen>
+</resources>

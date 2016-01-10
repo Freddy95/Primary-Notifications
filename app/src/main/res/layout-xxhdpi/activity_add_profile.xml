@@ -14,7 +14,7 @@
             android:clickable="true"
             android:onClick="showStartTime"
             android:layout_gravity="left|top"
-            android:textSize="20dp"
+            android:textSize="@dimen/ProfileActivityTextSize"
             android:textColor="#3399FF"
             android:layout_marginTop="25dp"
             android:layout_alignLeft="@+id/selectContacts"
@@ -28,7 +28,7 @@
             android:layout_gravity="right|top"
             android:paddingTop="0dp"
             android:paddingRight="0dp"
-            android:textSize="20dp"
+            android:textSize="@dimen/ProfileActivityTextSize"
             android:clickable="true"
             android:layout_marginTop="25dp"
             android:onClick="showEndTime"
@@ -43,24 +43,24 @@
             android:text="CANCEL"
             android:id="@+id/cancel_prof"
             android:clickable="true"
-            android:textSize="20dp"
+            android:textSize="@dimen/ProfileActivityTextSize"
             android:textColor="#000000"
             android:layout_alignTop="@+id/submit_prof"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_marginLeft="50dp"/>
+            android:layout_marginLeft="@dimen/FrameLeftMargin"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="SUBMIT"
             android:id="@+id/submit_prof"
-            android:textSize="20dp"
+            android:textSize="@dimen/ProfileActivityTextSize"
             android:textColor="#000000"
             android:clickable="true"
+            android:layout_marginRight="@dimen/FrameRightMargin"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginRight="50dp"/>
+            android:layout_alignParentEnd="true" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -69,11 +69,11 @@
             android:text="Select Contacts"
             android:id="@+id/selectContacts"
             android:layout_gravity="left|top"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="@dimen/ProfileActivityTextSize"
             android:layout_marginTop="80dp"
             android:clickable="true"
             android:onClick="selectContacts"
-            android:textSize="20dp"
+            android:textSize="@dimen/ProfileActivityTextSize"
             android:textColor="#000000" />
 
         <CheckBox
@@ -81,7 +81,7 @@
             android:layout_height="wrap_content"
             android:text="Text Messages"
             android:id="@+id/SMS"
-            android:textSize="20dp"
+            android:textSize="@dimen/ProfileActivityTextSize"
             android:layout_alignTop="@+id/selectDays"
             android:layout_alignLeft="@+id/phoneCalls"
             android:layout_alignStart="@+id/phoneCalls"
@@ -94,7 +94,7 @@
             android:layout_height="wrap_content"
             android:text="Phone Calls"
             android:id="@+id/phoneCalls"
-            android:textSize="20dp"
+            android:textSize="@dimen/ProfileActivityTextSize"
             android:layout_marginLeft="10dp"
             android:layout_alignTop="@+id/selectContacts"
             android:layout_toRightOf="@+id/selectContacts"
@@ -109,7 +109,7 @@
         android:text="Select Days"
         android:id="@+id/selectDays"
         android:textColor="#000000"
-        android:textSize="20dp"
+        android:textSize="@dimen/ProfileActivityTextSize"
         android:layout_marginTop="26dp"
         android:layout_below="@+id/selectContacts"
         android:layout_alignLeft="@+id/selectContacts"
