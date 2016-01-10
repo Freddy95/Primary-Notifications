@@ -29,7 +29,7 @@
         <item name="android:actionBarStyle">@style/ProfileActionBar</item>
         <item name="actionBarStyle">@style/ProfileActionBar</item>
 
-        <item name="android:textColorPrimary">#FFFFFF</item>
+        <item name="android:textColorPrimary">#000000</item>
 
 
     </style>
@@ -38,6 +38,13 @@
         <item name="android:background">#FF471A</item>
         <item name="background">@color/actionBarColor</item>
         <item name="android:textColorPrimary">#FFFFFF</item>
+        <item name="titleTextStyle">@style/MyTitleStyle</item>
+
+    </style>
+
+    <style name="MyTitleStyle" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textColor">#FFFFFF</item>
+
     </style>
 
 </resources>
