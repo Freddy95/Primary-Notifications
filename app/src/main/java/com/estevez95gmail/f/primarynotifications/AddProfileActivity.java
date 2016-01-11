@@ -31,6 +31,8 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
     CheckBox phoneCalls;
     boolean editing;
     int id;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -88,6 +90,7 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
         MainActivity.fa.finish();
         Intent main = new Intent(AddProfileActivity.this, MainActivity.class);
         startActivity(main);
+        Toast.makeText(getApplicationContext(), "Make Sure to Mute Phone so Unwanted Notifications Don't Ring While Profile is Active.", Toast.LENGTH_LONG).show();
         finish();
 
     }
@@ -448,6 +451,8 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
         startActivity(main);
         finish();
     }
+
+
 
 
 

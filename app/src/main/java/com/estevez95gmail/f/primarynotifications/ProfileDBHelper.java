@@ -83,7 +83,7 @@ public class ProfileDBHelper extends SQLiteOpenHelper {
         String sms = PROFILES_FALSE;
         String phoneCalls = PROFILES_FALSE;
         if(profile.isEnabled())
-            enabled = "True";
+            enabled = PROFILES_TRUE;
         if(profile.isPhoneCalls())
             phoneCalls = PROFILES_TRUE;
         if(profile.isSms())
@@ -104,20 +104,13 @@ public class ProfileDBHelper extends SQLiteOpenHelper {
         contentValues.put(PROFILES_COLUMN_SMS, sms);
 
         db.insert("profiles", null, contentValues);
+        db.close();
         return true;
     }
 
-    public Cursor getData(int id) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res = db.rawQuery("select * from profiles where id=" + id + "", null);
-        return res;
-    }
 
-    public int numberOfRows() {
-        SQLiteDatabase db = this.getReadableDatabase();
-        int numRows = (int) DatabaseUtils.queryNumEntries(db, PROFILES_TABLE_NAME);
-        return numRows;
-    }
+
+
 
     public boolean updateProfile(Profile profile, int id) {
 
@@ -171,14 +164,17 @@ public class ProfileDBHelper extends SQLiteOpenHelper {
 
 
         db.update("profiles", contentValues, "id = ? ", new String[]{Integer.toString(id)});
+        db.close();
         return true;
     }
 
     public Integer deleteProfile(Integer id) {
         SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete("profiles",
+        int i =  db.delete("profiles",
                 "id = ? ",
                 new String[]{Integer.toString(id)});
+        db.close();
+        return i;
     }
 
     public ArrayList<Profile> getAllProfiles() {
@@ -229,6 +225,7 @@ public class ProfileDBHelper extends SQLiteOpenHelper {
             res.moveToNext();
         }
         res.close();
+        db.close();
         return array_list;
 
 
@@ -269,6 +266,7 @@ public class ProfileDBHelper extends SQLiteOpenHelper {
                     break;
                 case "Monday":
                     ret[1] = true;
+                    break;
                 case "Tuesday":
                     ret[2] = true;
                     break;

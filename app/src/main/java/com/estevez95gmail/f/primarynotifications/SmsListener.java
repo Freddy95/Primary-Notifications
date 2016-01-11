@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
@@ -32,18 +33,22 @@ public class SmsListener extends BroadcastReceiver {
                 final Object[] pdusObj = (Object[]) bundle.get("pdus");
 
                 for (int i = 0; i < pdusObj.length; i++) {
+                    SmsMessage currentMessage;
+                    if(Build.VERSION.SDK_INT < 23)
+                        currentMessage = SmsMessage.createFromPdu((byte[]) pdusObj[i]);
+                    else
+                        currentMessage = SmsMessage.createFromPdu((byte[]) pdusObj[i], intent.getStringExtra("format"));
 
-                    SmsMessage currentMessage = SmsMessage.createFromPdu((byte[]) pdusObj[i]);
                     String phoneNumber = currentMessage.getDisplayOriginatingAddress();
 
 
-                    MainActivity.checkToNotify(phoneNumber);
+                    MainActivity.checkToRing(phoneNumber, false);
 
                 } // end for loop
             } // bundle is null
 
         } catch (Exception e) {
-            Log.e("SmsReceiver", "Exception smsReceiver" +e);
+            Log.e("SmsReceiver", "Exception smsReceiver " + e);
 
         }
     }
