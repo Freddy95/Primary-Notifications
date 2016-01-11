@@ -1,0 +1,16 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="TimeViewSize">29sp</dimen>
+    <dimen name="DayViewSize">20sp</dimen>
+    <dimen name="FrameMargin">16dp</dimen>
+    <dimen name="ProfileTextSize">25sp</dimen>
+    <dimen name="ProfileActivityTextSize">25sp</dimen>
+    <dimen name="ProfileActivityMarginTop">25dp</dimen>
+    <dimen name="CheckBoxMargin">15dp</dimen>
+    <dimen name="FrameRightMargin">80dp</dimen>
+    <dimen name="FrameLeftMargin">65dp</dimen>
+    <dimen name="SpaceBetweenDays">20dp</dimen>
+    <dimen name="ProfileActivityButtonMargin">60dp</dimen>
+</resources>

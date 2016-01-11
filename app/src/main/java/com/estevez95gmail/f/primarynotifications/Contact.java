@@ -1,11 +1,14 @@
 package com.estevez95gmail.f.primarynotifications;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.Comparator;
 
 /**
  * Created by Freddy Estevez on 9/13/15.
  */
-public class Contact {
+public class Contact implements Parcelable {
 
     String name, phoneNumber;
 
@@ -41,4 +44,30 @@ public class Contact {
         return (c.getName().equals(name) && c.getPhoneNumber().equals(phoneNumber));
     }
 
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.name);
+        dest.writeString(this.phoneNumber);
+    }
+
+    protected Contact(Parcel in) {
+        this.name = in.readString();
+        this.phoneNumber = in.readString();
+    }
+
+    public static final Parcelable.Creator<Contact> CREATOR = new Parcelable.Creator<Contact>() {
+        public Contact createFromParcel(Parcel source) {
+            return new Contact(source);
+        }
+
+        public Contact[] newArray(int size) {
+            return new Contact[size];
+        }
+    };
 }

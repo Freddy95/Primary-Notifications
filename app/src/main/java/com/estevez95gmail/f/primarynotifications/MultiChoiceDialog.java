@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 
+import android.app.Fragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -39,15 +40,9 @@ public class MultiChoiceDialog extends DialogFragment{
     }
 
 
+    public MultiChoiceDialog(){}
 
-    public MultiChoiceDialog(Profile p, boolean contact) {
 
-        //Profile to edit.
-        profile = p;
-        //Check to see if this dialog should be used for selected days
-        // or contacts.
-        this.contact = contact;
-    }
 
     @Override
     public void onAttach(Activity activity) {
@@ -67,10 +62,14 @@ public class MultiChoiceDialog extends DialogFragment{
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         // Where we track the selected items
-
+        Bundle b = getArguments();
+        profile = (Profile) b.get("Profile");
+        contact = b.getBoolean("Contact");
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         if(contact) {//We are selecting between contacts and not days
+            ArrayList<Contact> c = b.getParcelableArrayList("ContactList");
+            addContacts(c);
             builder.setTitle("Select Contacts")
 
 

@@ -202,15 +202,23 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
     }*/
 
     public void selectContacts(View v){
-        MultiChoiceDialog dialog = new MultiChoiceDialog(profile, true);
-        dialog.addContacts(contacts);
+        MultiChoiceDialog dialog = new MultiChoiceDialog();
+        Bundle b = new Bundle();
+        b.putBoolean("Contact", true);
+        b.putParcelable("Profile", profile);
+        b.putParcelableArrayList("ContactList", contacts);
+        dialog.setArguments(b);
         dialog.show(getFragmentManager(), "Select Contacts");
 
 
     }
 
     public void selectDays(View v){
-        MultiChoiceDialog dialog = new MultiChoiceDialog(profile, false);
+        MultiChoiceDialog dialog = new MultiChoiceDialog();
+        Bundle b = new Bundle();
+        b.putBoolean("Contact", false);
+        b.putParcelable("Profile", profile);
+        dialog.setArguments(b);
         dialog.show(getFragmentManager(), "Select Days");
         Log.d("tag", "Selecting days");
     }
@@ -221,12 +229,7 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
 
         contacts = MainActivity.contacts;
     }
-    /**
-     * When user is finished setting up profile add it to list in MainActivity
-     */
-    public void finished(View v){
 
-    }
 
     /**
      * initializing values

@@ -1,14 +1,17 @@
 package com.estevez95gmail.f.primarynotifications;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.view.View;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 /**
  * Contains the times and days of the week for this app to be active
  */
-public class Profile {
+public class Profile implements Parcelable {
 
     ArrayList<Contact> contacts = new ArrayList<>();
     int startHour, endHour, startMinute, endMinute;
@@ -42,6 +45,7 @@ public class Profile {
         saturday = false;
         sunday = false;
     }
+
 
     public int getStartHour() {
         return startHour;
@@ -220,5 +224,60 @@ public class Profile {
     }
 
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeList(this.contacts);
+        dest.writeInt(this.startHour);
+        dest.writeInt(this.endHour);
+        dest.writeInt(this.startMinute);
+        dest.writeInt(this.endMinute);
+        dest.writeString(this.startTime);
+        dest.writeString(this.endTime);
+        dest.writeByte(monday ? (byte) 1 : (byte) 0);
+        dest.writeByte(tuesday ? (byte) 1 : (byte) 0);
+        dest.writeByte(wednesday ? (byte) 1 : (byte) 0);
+        dest.writeByte(thursday ? (byte) 1 : (byte) 0);
+        dest.writeByte(friday ? (byte) 1 : (byte) 0);
+        dest.writeByte(saturday ? (byte) 1 : (byte) 0);
+        dest.writeByte(sunday ? (byte) 1 : (byte) 0);
+        dest.writeByte(enabled ? (byte) 1 : (byte) 0);
+        dest.writeByte(sms ? (byte) 1 : (byte) 0);
+        dest.writeByte(phoneCalls ? (byte) 1 : (byte) 0);
+    }
+
+    protected Profile(Parcel in) {
+        this.contacts = new ArrayList<Contact>();
+        in.readList(this.contacts, List.class.getClassLoader());
+        this.startHour = in.readInt();
+        this.endHour = in.readInt();
+        this.startMinute = in.readInt();
+        this.endMinute = in.readInt();
+        this.startTime = in.readString();
+        this.endTime = in.readString();
+        this.monday = in.readByte() != 0;
+        this.tuesday = in.readByte() != 0;
+        this.wednesday = in.readByte() != 0;
+        this.thursday = in.readByte() != 0;
+        this.friday = in.readByte() != 0;
+        this.saturday = in.readByte() != 0;
+        this.sunday = in.readByte() != 0;
+        this.enabled = in.readByte() != 0;
+        this.sms = in.readByte() != 0;
+        this.phoneCalls = in.readByte() != 0;
+    }
+
+    public static final Parcelable.Creator<Profile> CREATOR = new Parcelable.Creator<Profile>() {
+        public Profile createFromParcel(Parcel source) {
+            return new Profile(source);
+        }
+
+        public Profile[] newArray(int size) {
+            return new Profile[size];
+        }
+    };
 }
