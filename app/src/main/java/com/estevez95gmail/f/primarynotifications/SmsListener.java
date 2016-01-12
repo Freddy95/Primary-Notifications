@@ -3,13 +3,11 @@ package com.estevez95gmail.f.primarynotifications;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.telephony.SmsMessage;
 import android.util.Log;
-import android.widget.Toast;
 
 /**
  * Created by Freddy Estevez on 1/3/16.
@@ -40,7 +38,7 @@ public class SmsListener extends BroadcastReceiver {
                         currentMessage = SmsMessage.createFromPdu((byte[]) pdusObj[i], intent.getStringExtra("format"));
 
                     String phoneNumber = currentMessage.getDisplayOriginatingAddress();
-
+                    Log.d("RECIEVED SMS", "Recieved sms");
 
                     MainActivity.checkToRing(phoneNumber, false);
 
