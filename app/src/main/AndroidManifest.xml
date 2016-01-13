@@ -43,6 +43,10 @@
             >
         </activity>
 
+        <receiver android:name=".AlarmReceiver">
+
+        </receiver>
+
         <receiver android:name="com.estevez95gmail.f.primarynotifications.SmsListener">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />

@@ -2,8 +2,13 @@ package com.estevez95gmail.f.primarynotifications;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,6 +24,7 @@ import android.os.CountDownTimer;
 import android.provider.ContactsContract;
 
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -34,6 +40,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 
 
 import android.Manifest;
@@ -64,21 +71,57 @@ public class MainActivity extends ListActivity {
     final String readContacts = Manifest.permission.READ_CONTACTS;
     final String writeExternalStorage = Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
+    static PendingIntent pIntent1;
+    static Notification notif;
+    static NotificationManager notificationManager;
+
+    static AlarmManager alarmManager;
+
     static ProfileDBHelper db;
+    static boolean notified;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        notified = false;
         Log.d("CHECK", "Does this work");
+        Notification.Builder builder = new Notification.Builder(getApplicationContext());
+        builder.setSmallIcon(R.mipmap.ic_launcher);
+        builder.setContentTitle("Primary Notifications");
+        builder.setContentText("Primary Notifications is active");
+        Intent i = new Intent(this, MainActivity.class);
+        if (Build.VERSION.SDK_INT > 15) {
+
+            PendingIntent pIntent = PendingIntent.getActivity(this, 0, i, 0);
+            builder.setContentIntent(pIntent);
+        } else {
+
+            PendingIntent pIntent = PendingIntent.getActivity(this, 0, i, 0);
+            builder.setContentIntent(pIntent);
+        }
+
+        if(alarmManager == null)
+            alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+
+        if (Build.VERSION.SDK_INT > 15) {
+            notif = builder.build();
+        } else {
+            notif = builder.getNotification();
+        }
+        notif.flags = Notification.FLAG_ONGOING_EVENT;
+        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         fa = this;
         context = getApplicationContext();
         db = new ProfileDBHelper(this);
         profiles = db.getAllProfiles();
+        setUpAlarms();
 
         super.onCreate(savedInstanceState);
         // list = getListView();
 
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        checkNotification();
 
         setContentView(R.layout.activity_main);
 
@@ -108,23 +151,20 @@ public class MainActivity extends ListActivity {
                                 playing = false;
 
                             }
-                            audioManager.setRingerMode(originalRingerMode);
-                            if (originalRingerMode == 2) {
-                                audioManager.setStreamVolume(AudioManager.STREAM_RING, volume, AudioManager.FLAG_SHOW_UI);
-                            }
+                            audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+
                         }
 
                     }
                     if (state == TelephonyManager.CALL_STATE_IDLE) {
 
                         if (audioManager != null) {
-                            audioManager.setRingerMode(originalRingerMode);
-                            if (originalRingerMode == 2) {
-                                audioManager.setStreamVolume(AudioManager.STREAM_RING, volume, AudioManager.FLAG_SHOW_UI);
+                            if (isActive()) {
+                                audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+                                if (ringtone != null)
+                                    ringtone.stop();
+                                playing = false;
                             }
-                            if (ringtone != null)
-                                ringtone.stop();
-                            playing = false;
                         }
                     }
                 }
@@ -188,6 +228,7 @@ public class MainActivity extends ListActivity {
                 checkCurrentPermissions();
                 return;
             }
+
 
         }
         //NOT RUNNING ANDROID 6 OR GREATER
@@ -260,7 +301,6 @@ public class MainActivity extends ListActivity {
      * Check current permissions we already have.
      */
     public void checkCurrentPermissions() {
-
         if (Build.VERSION.SDK_INT >= 23) {
             if (checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
                 askForPermissions(Manifest.permission.READ_CONTACTS);
@@ -350,8 +390,7 @@ public class MainActivity extends ListActivity {
      * Check to determine if phone should play ringtone or notification sound.
      *
      * @param phoneNumber - person sending the call or text message.
-     *
-     * @param ring - whether the phone is receiving a call or text
+     * @param ring        - whether the phone is receiving a call or text
      */
     public static void checkToRing(String phoneNumber, boolean ring) {
         Calendar calendar = Calendar.getInstance();
@@ -361,7 +400,7 @@ public class MainActivity extends ListActivity {
         Log.d("CheckToRing", "Checking");
         for (Profile p : profiles) {
             boolean r;
-            if(ring)
+            if (ring)
                 r = p.isPhoneCalls();
             else
                 r = p.isSms();
@@ -371,50 +410,47 @@ public class MainActivity extends ListActivity {
                 if (p.getDays()[day - 1]) {
                     Log.d("CurrentDay", "It is current day");
 
-                        if (p.getStartHour() < hour && p.getEndHour() > hour) {
-                            if(r) {
-                                Log.d("CHECK 1", "p.getStartHour() < hour && p.getEndHour() > hour");
-                                mutePhone();
+                    if (p.getStartHour() < hour && p.getEndHour() > hour) {
+                        if (r) {
+                            Log.d("CHECK 1", "p.getStartHour() < hour && p.getEndHour() > hour");
+                            for (Contact c : p.getContacts()) {
+                                if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
+                                    Log.d("Ringing", "Ringing");
+                                    // ring
+                                    if (ring)
+                                        ring();
+                                    else
+                                        notificationRing();
+                                    return;
+                                }
+                            }
+                        }
+                    } else if (p.getStartHour() == hour && p.startHour == p.endHour) {
+
+                        if (p.getStartMinute() <= min && p.getEndMinute() >= min) {
+                            if (r) {
+                                Log.d("CHECK 2", "p.getStartHour() < hour && p.getEndHour() > hour");
+
                                 for (Contact c : p.getContacts()) {
                                     if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
-                                        Log.d("Ringing", "Ringing");
+
                                         // ring
                                         if (ring)
                                             ring();
                                         else
                                             notificationRing();
+
                                         return;
                                     }
                                 }
                             }
-                        } else if (p.getStartHour() == hour && p.startHour == p.endHour) {
+                            //ring
+                        }
+                    } else if (p.getStartHour() == hour) {
 
-                            if (p.getStartMinute() <= min && p.getEndMinute() >= min) {
-                                if(r) {
-                                    Log.d("CHECK 2", "p.getStartHour() < hour && p.getEndHour() > hour");
-
-                                    mutePhone();
-                                    for (Contact c : p.getContacts()) {
-                                        if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
-
-                                            // ring
-                                            if (ring)
-                                                ring();
-                                            else
-                                                notificationRing();
-
-                                            return;
-                                        }
-                                    }
-                                }
-                                //ring
-                            }
-                        } else if (p.getStartHour() == hour) {
-
-                            if (p.getStartMinute() <= min) {
-                                Log.d("CHECK 3", "p.getStartHour() < hour && p.getEndHour() > hour");
-                            if(r) {
-                                mutePhone();
+                        if (p.getStartMinute() <= min) {
+                            Log.d("CHECK 3", "p.getStartHour() < hour && p.getEndHour() > hour");
+                            if (r) {
                                 for (Contact c : p.getContacts()) {
                                     if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
                                         // ring
@@ -426,26 +462,25 @@ public class MainActivity extends ListActivity {
                                     }
                                 }
                             }
-                            }
-                        } else if (p.getEndHour() == hour) {
-                            if (p.getEndMinute() >= min) {
-                                Log.d("CHECK 4", "p.getStartHour() < hour && p.getEndHour() > hour");
-                                if(r) {
-                                    mutePhone();
-                                    for (Contact c : p.getContacts()) {
-                                        if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
-                                            // ring
-                                            if (ring)
-                                                ring();
-                                            else
-                                                notificationRing();
-                                            return;
-                                        }
+                        }
+                    } else if (p.getEndHour() == hour) {
+                        if (p.getEndMinute() >= min) {
+                            Log.d("CHECK 4", "p.getStartHour() < hour && p.getEndHour() > hour");
+                            if (r) {
+                                for (Contact c : p.getContacts()) {
+                                    if (c.getPhoneNumber().equals(phoneNumber) || c.getPhoneNumber().equals("1" + phoneNumber)) {
+                                        // ring
+                                        if (ring)
+                                            ring();
+                                        else
+                                            notificationRing();
+                                        return;
                                     }
                                 }
                             }
                         }
                     }
+                }
 
             }
         }
@@ -486,10 +521,10 @@ public class MainActivity extends ListActivity {
      */
     public static void notificationRing() {
         //Toast.makeText(getApplicationContext(), "Ringing", Toast.LENGTH_SHORT).show();
-    if(ringtone != null) {
-        if (ringtone.isPlaying())
-            return;
-    }
+        if (ringtone != null) {
+            if (ringtone.isPlaying())
+                return;
+        }
 
         Log.d("Org", "Original " + audioManager.getRingerMode());
 
@@ -522,9 +557,7 @@ public class MainActivity extends ListActivity {
                 @Override
                 public void onFinish() {
                     ringtone.stop();
-                    audioManager.setRingerMode(originalRingerMode);
-                    if (originalRingerMode == 2)
-                        audioManager.setStreamVolume(AudioManager.STREAM_RING, volume, AudioManager.FLAG_SHOW_UI);
+                    audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
                 }
             };
 
@@ -541,13 +574,10 @@ public class MainActivity extends ListActivity {
                 @Override
                 public void onFinish() {
                     ringtone.stop();
-                    audioManager.setRingerMode(originalRingerMode);
-                    if (originalRingerMode == 2)
-                        audioManager.setStreamVolume(AudioManager.STREAM_RING, volume, AudioManager.FLAG_SHOW_UI);
+                    audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
                 }
             };
         }
-
 
 
     }
@@ -563,12 +593,161 @@ public class MainActivity extends ListActivity {
             originalRingerMode = audioManager.getRingerMode();
             if (originalRingerMode == 2)
                 volume = audioManager.getStreamVolume(AudioManager.STREAM_RING);
-            if(Build.VERSION.SDK_INT >= 21){
+            if (Build.VERSION.SDK_INT >= 21) {
                 audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
                 audioManager.setStreamVolume(AudioManager.STREAM_RING, 0, AudioManager.FLAG_ALLOW_RINGER_MODES);
-            }else
+            } else
                 audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
         }
+    }
+
+
+    public static boolean isActive() {
+        Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int min = calendar.get(Calendar.MINUTE);
+        int day = calendar.get(Calendar.DAY_OF_WEEK);
+        Log.d("CheckToRing", "Checking");
+        for (Profile p : profiles) {
+
+
+            if (p.isEnabled()) {
+                Log.d("Enabled", "Is Enabled");
+                if (p.getDays()[day - 1]) {
+                    Log.d("CurrentDay", "It is current day");
+
+                    if (p.getStartHour() < hour && p.getEndHour() > hour) {
+                        return true;
+                    } else if (p.getStartHour() == hour && p.startHour == p.endHour) {
+
+                        if (p.getStartMinute() <= min && p.getEndMinute() >= min) {
+                            return true;
+                        }
+
+                    } else if (p.getStartHour() == hour) {
+
+                        if (p.getStartMinute() <= min) {
+                            return true;
+                        }
+
+                    } else if (p.getEndHour() == hour) {
+
+                        if (p.getEndMinute() >= min) {
+                            return true;
+                        }
+
+                    }
+                }
+
+            }
+        }
+
+
+        return false;
+    }
+
+
+    public static void setUpAlarms() {
+
+        cancelAlarms();//end all current running alarms
+        for(Profile p : profiles){
+            if(p.isEnabled()){
+              Intent intent = new Intent(context, AlarmReceiver.class);
+
+                if(pIntent1 == null)
+                    pIntent1 = PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                Log.d("TIME IN MILIS", "" + System.currentTimeMillis() + 60000);
+                if(Build.VERSION.SDK_INT >= 19)
+                    alarmManager.setExact(AlarmManager.RTC, System.currentTimeMillis()+ 60000, pIntent1);
+                else
+                     alarmManager.set(AlarmManager.RTC, System.currentTimeMillis()+ 60000, pIntent1);
+            }
+        }
+//
+//        for (Profile p : profiles) {
+//            if (p.isEnabled()) {
+//                boolean[] days = p.getDays();
+//                for (int i = 0; i < 7; i++) {
+//                    if (days[i]) {
+//                        Intent intent = new Intent(context, AlarmReceiver.class);
+//
+//                        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+//                        id++;
+//                        Log.d("SETTING UP ALARMS", "Alarm");
+//                        Calendar cal = Calendar.getInstance();
+//                        Calendar newCal = Calendar.getInstance();
+//                        Calendar endCal = Calendar.getInstance();
+//
+//                        newCal.set(Calendar.DAY_OF_WEEK, (i + 1));
+//                        newCal.set(Calendar.HOUR_OF_DAY, p.getStartHour());
+//                        newCal.set(Calendar.MINUTE, p.getStartMinute());
+//                        Date c = cal.getTime();
+//                        Date n = newCal.getTime();
+//                        long mil;
+//                        if (cal.compareTo(newCal) == 1) {
+//                            mil = c.getTime() - n.getTime();
+//                            mil = 604800000 - mil;
+//                        } else
+//                            mil = n.getTime() - c.getTime();
+//
+//                        endCal.set(Calendar.DAY_OF_WEEK, (i + 1));
+//                        endCal.set(Calendar.HOUR_OF_DAY, p.getEndHour());
+//                        endCal.set(Calendar.MINUTE, p.getEndMinute() + 1);
+//                        Date e = endCal.getTime();
+//                        long endMil;
+//                        if (cal.compareTo(endCal) == 1) {
+//                            endMil = c.getTime() - e.getTime();
+//                            endMil = 604800000 - endMil;
+//                        } else
+//                            endMil = e.getTime() - c.getTime();
+//                        Log.d("MILI", "" + mil);
+//                        Log.d("ENDMILI", "" + endMil);
+//
+//                        alarmManager.setRepeating(AlarmManager.RTC, mil, 604800000, pendingIntent);
+//
+//                        pendingIntent = PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+//                        id++;
+//                        alarmManager.setRepeating(AlarmManager.RTC, endMil, 604800000, pendingIntent);
+//
+//
+//                    }
+//
+//                }
+//            }
+//        }
+    }
+
+    public static void returnPhoneToState() {
+        audioManager.setRingerMode(originalRingerMode);
+        if (originalRingerMode == 2)
+            audioManager.setStreamVolume(AudioManager.STREAM_RING, volume, AudioManager.FLAG_ALLOW_RINGER_MODES);
+    }
+
+
+    public static void checkNotification() {
+        if (isActive()) {
+            notified = true;
+            notificationManager.notify(1010101011, notif);
+            mutePhone();
+        } else {
+            notified = false;
+            notificationManager.cancel(1010101011);
+        }
+    }
+
+    public static void cancelAlarms() {
+        if(alarmManager != null)
+            alarmManager.cancel(pIntent1);
+        while (id >= 0) {
+            Intent intent = new Intent(context, AlarmReceiver.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
+                    id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            alarmManager.cancel(pendingIntent);
+            id--;
+        }
+        id = 0;
+
+
     }
 
 

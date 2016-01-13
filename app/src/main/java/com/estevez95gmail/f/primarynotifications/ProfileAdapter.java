@@ -44,10 +44,11 @@ public class ProfileAdapter extends ArrayAdapter<Profile> {
             holder.enabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
+                    MainActivity.cancelAlarms();
                         mProfiles.get(position).setEnabled(isChecked);
-                    MainActivity.db.updateProfile(mProfiles.get(position), position +1);
-
+                    MainActivity.db.updateProfile(mProfiles.get(position), position + 1);
+                    MainActivity.setUpAlarms();
+                    MainActivity.checkNotification();
                 }
             });
             holder.endTime = (TextView) convertView.findViewById(R.id.endTime);
