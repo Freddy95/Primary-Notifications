@@ -20,6 +20,8 @@ public class Profile implements Parcelable {
     boolean enabled;
     boolean sms, phoneCalls;
 
+    int id;
+
     public boolean isSms() {
         return sms;
     }
@@ -224,6 +226,14 @@ public class Profile implements Parcelable {
     }
 
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -231,7 +241,7 @@ public class Profile implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeList(this.contacts);
+        dest.writeTypedList(contacts);
         dest.writeInt(this.startHour);
         dest.writeInt(this.endHour);
         dest.writeInt(this.startMinute);
@@ -248,11 +258,11 @@ public class Profile implements Parcelable {
         dest.writeByte(enabled ? (byte) 1 : (byte) 0);
         dest.writeByte(sms ? (byte) 1 : (byte) 0);
         dest.writeByte(phoneCalls ? (byte) 1 : (byte) 0);
+        dest.writeInt(this.id);
     }
 
     protected Profile(Parcel in) {
-        this.contacts = new ArrayList<Contact>();
-        in.readList(this.contacts, List.class.getClassLoader());
+        this.contacts = in.createTypedArrayList(Contact.CREATOR);
         this.startHour = in.readInt();
         this.endHour = in.readInt();
         this.startMinute = in.readInt();
@@ -269,9 +279,10 @@ public class Profile implements Parcelable {
         this.enabled = in.readByte() != 0;
         this.sms = in.readByte() != 0;
         this.phoneCalls = in.readByte() != 0;
+        this.id = in.readInt();
     }
 
-    public static final Parcelable.Creator<Profile> CREATOR = new Parcelable.Creator<Profile>() {
+    public static final Creator<Profile> CREATOR = new Creator<Profile>() {
         public Profile createFromParcel(Parcel source) {
             return new Profile(source);
         }

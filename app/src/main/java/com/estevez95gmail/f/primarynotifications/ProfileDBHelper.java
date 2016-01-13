@@ -63,6 +63,7 @@ public class ProfileDBHelper extends SQLiteOpenHelper {
         int endHour = profile.getEndHour();
         int endMin = profile.getEndMinute();
 
+
         ArrayList<String> startTime = new ArrayList<>();
         startTime.add(Integer.toString(startHour));
         startTime.add(Integer.toString(startMin));
@@ -196,14 +197,14 @@ public class ProfileDBHelper extends SQLiteOpenHelper {
             String enabled = res.getString(res.getColumnIndex(PROFILES_COLUMN_ENABLED));
             String phoneCalls = res.getString(res.getColumnIndex(PROFILES_COLUMN_PHONECALLS));
             String sms = res.getString(res.getColumnIndex(PROFILES_COLUMN_SMS));
-
+            int id = Integer.parseInt(res.getString(res.getColumnIndex(PROFILES_COLUMN_ID)));
             Profile profile = new Profile();
 
             profile.setDays(convertDaysToBoolean(days));
             profile.setEnabled(enabled.equals(PROFILES_TRUE));
             profile.setPhoneCalls(phoneCalls.equals(PROFILES_TRUE));
             profile.setSms(sms.equals(PROFILES_TRUE));
-
+            profile.setId(id);
             int startHour = Integer.valueOf(startTimes.get(0));
             int startMin = Integer.valueOf(startTimes.get(1));
             int endHour = Integer.valueOf(endTimes.get(0));
@@ -315,5 +316,17 @@ public class ProfileDBHelper extends SQLiteOpenHelper {
 
         String da = convertArrayListToString(d);
         return da;
+    }
+
+
+    public int getLast(){
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor res = db.rawQuery("select * from profiles", null);
+        res.moveToLast();
+        String id = res.getString(res.getColumnIndex(PROFILES_COLUMN_ID));
+        db.close();
+        res.close();
+        return Integer.parseInt(id);
     }
 }

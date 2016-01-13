@@ -86,7 +86,9 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
         profile.setStartTime(startView.getText().toString());
         profile.setEndTime(endView.getText().toString());
         profile.setEnabled(true);
+        profile.setId(id);
         MainActivity.db.insertProfile(profile);
+        profile.setId(MainActivity.db.getLast());
         MainActivity.fa.finish();
         Intent main = new Intent(AddProfileActivity.this, MainActivity.class);
         startActivity(main);
@@ -443,9 +445,8 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
     }
 
     public void deleteProfile(){
-        id = MainActivity.profiles.indexOf(profile);
-        MainActivity.db.deleteProfile(id+1);
-        MainActivity.profiles.remove(id);
+        id = profile.getId();
+        MainActivity.db.deleteProfile(id);
         MainActivity.fa.finish();
         Intent main = new Intent(AddProfileActivity.this, MainActivity.class);
         startActivity(main);

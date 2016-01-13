@@ -54,6 +54,7 @@ public class MainActivity extends ListActivity {
     static Activity fa;
     static boolean playing;
     static Context context;
+    static int id;
 
     final private int REQUEST_PERMISSIONS = 123;
 
