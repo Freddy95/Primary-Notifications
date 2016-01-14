@@ -14,25 +14,37 @@ import java.util.jar.Manifest;
  * Created by Freddy Estevez on 1/13/16.
  */
 public class AlarmReceiver extends BroadcastReceiver {
-    int id = 1010101011;
+   public  static final int id = 1010101011;
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d("ALARM", "ALARMING");
-        if(Build.VERSION.SDK_INT >= 19)
-             MainActivity.alarmManager.setExact(AlarmManager.RTC, System.currentTimeMillis()+ 60000, MainActivity.pIntent1);
-        else
-            MainActivity.alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + 60000, MainActivity.pIntent1);
-        boolean active = MainActivity.isActive();
-        if(active && !MainActivity.notified) {
-            MainActivity.notified = true;
-            MainActivity.notificationManager.notify(id, MainActivity.notif);
-            MainActivity.mutePhone();
+        try {
+            if(MainActivity.profiles.isEmpty()){
+                MainActivity.notificationManager.cancel(id);
+            }
+            Log.d("ALARM", "ALARMING");
+            if (Build.VERSION.SDK_INT >= 19)
+                MainActivity.alarmManager.setExact(AlarmManager.RTC, System.currentTimeMillis() + 60000, MainActivity.pIntent1);
+            else
+                MainActivity.alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + 60000, MainActivity.pIntent1);
 
-        }
-        else if(MainActivity.notified && !(active)){
-            MainActivity.notificationManager.cancel(id);
-            MainActivity.returnPhoneToState();
+            boolean active = MainActivity.isActive();
 
+            if (active && !MainActivity.notified) {
+
+                MainActivity.notified = true;
+                MainActivity.notificationManager.notify(id, MainActivity.notif);
+                MainActivity.mutePhone();
+
+            } else if (MainActivity.notified && !(active)) {
+                MainActivity.notificationManager.cancel(id);
+                MainActivity.returnPhoneToState();
+
+            }
+        }catch(NullPointerException e){
+            Log.d("Exception", "EXCEPTION");
+            android.os.Process.killProcess(android.os.Process.myPid());
+
+            System.exit(0);
         }
 
     }

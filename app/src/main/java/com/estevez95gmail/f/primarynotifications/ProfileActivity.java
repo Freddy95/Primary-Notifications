@@ -53,6 +53,7 @@ public class ProfileActivity extends AppCompatActivity implements MultiChoiceDia
             initEditHandlers();
         }
 
+
         getContacts();
 
 
@@ -89,6 +90,7 @@ public class ProfileActivity extends AppCompatActivity implements MultiChoiceDia
         profile.setId(id);
         MainActivity.db.insertProfile(profile);
         profile.setId(MainActivity.db.getLast());
+
         MainActivity.fa.finish();
         Intent main = new Intent(ProfileActivity.this, MainActivity.class);
         startActivity(main);
@@ -197,6 +199,7 @@ public class ProfileActivity extends AppCompatActivity implements MultiChoiceDia
     public void returnHome(){
 
           finish();
+
 
     }
 

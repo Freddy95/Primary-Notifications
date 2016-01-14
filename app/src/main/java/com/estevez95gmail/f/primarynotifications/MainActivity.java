@@ -7,9 +7,11 @@ import android.app.ListActivity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.media.AudioManager;
@@ -17,11 +19,9 @@ import android.media.MediaPlayer;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.Build;
-import android.os.CountDownTimer;
+import android.os.*;
 import android.provider.ContactsContract;
 
-import android.os.Bundle;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -75,10 +75,16 @@ public class MainActivity extends ListActivity {
 
     static ProfileDBHelper db;
     static boolean notified;
+    static boolean backButton;
+    static boolean pIentent2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if(ProfileActivity.fa != null)
+
+        Intent intent = new Intent(this, KillNotificationService.class);
+        startService(intent);
+        backButton = false;
+        if (ProfileActivity.fa != null)
             ProfileActivity.fa.finish();
 
         notified = false;
@@ -109,7 +115,7 @@ public class MainActivity extends ListActivity {
         }
         notif.flags = Notification.FLAG_ONGOING_EVENT;
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        if(fa != null)
+        if (fa != null)
             fa.finish();
         fa = this;
         context = getApplicationContext();
@@ -137,11 +143,11 @@ public class MainActivity extends ListActivity {
                     number = incomingNumber;
                     // If phone ringing
                     if (state == TelephonyManager.CALL_STATE_RINGING) {//phone is ringing
-                            if (ringtone != null) {
-                                if (ringtone.isPlaying())
-                                    return;
-                            }
-                            checkToRing(number, true);
+                        if (ringtone != null) {
+                            if (ringtone.isPlaying())
+                                return;
+                        }
+                        checkToRing(number, true, context);
 
                     }
                     if (state == TelephonyManager.CALL_STATE_OFFHOOK) {
@@ -174,7 +180,12 @@ public class MainActivity extends ListActivity {
         } catch (RuntimeException e) {
             Toast.makeText(getBaseContext(), "Primary Notifications requires permissions", Toast.LENGTH_SHORT).show();
         }
+
     }
+
+
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -196,6 +207,7 @@ public class MainActivity extends ListActivity {
         //add profile
         if (id == R.id.action_addProf) {
             addProfile();
+
             return true;
         }
 
@@ -242,21 +254,40 @@ public class MainActivity extends ListActivity {
     @Override
     public void onPause() {
         super.onPause();
+
         Log.d("mainActivity", "onPause");
     }
 
+
+    protected void onStop() {
+
+        super.onStop();
+        Log.d("Stop", "onStop");
+        if (isFinishing()) {
+            onDestroy();
+        }
+
+    }
+
+
     @Override
     public void onResume() {
+
         super.onResume();
 
     }
 
+
+
     @Override
-    public void onDestroy() {
+    protected void onDestroy() {
+
         alarmManager.cancel(pIntent1);
         notificationManager.cancel(1010101011);
-        super.onDestroy();
         Log.d("mainActivity", "onDestroy");
+        super.onDestroy();
+
+
     }
 
 
@@ -338,10 +369,34 @@ public class MainActivity extends ListActivity {
     protected void onListItemClick(ListView l, View v, int position, long id) {
         selectedProfile = profiles.get(position);
 
+        if (Build.VERSION.SDK_INT >= 23) {
+            //IF ANDROID 6 OR GREATER MUST CHECK TO SEE IF WE HAVE PERMISSIONS
+            if (checkSelfPermission(Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED &&
+                    checkSelfPermission(Manifest.permission.RECEIVE_SMS) == PackageManager.PERMISSION_GRANTED &&
+                    checkSelfPermission(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED &&
+                    checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                    checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                //WE HAVE PERMISSIONS ABLE TO ADD PROFILE
+                getContacts();
+                Intent edit = new Intent(this, ProfileActivity.class);
+                startActivity(edit);
+                return;
+            } else {
+
+
+                //DONT HAVE PERMISSIONS MUST REQUEST FROM USER
+                //CHECK PERMISSIONS WE DO HAVE THEN ASK FOR ALL NEEDED PERMISSIONS
+                checkCurrentPermissions();
+                return;
+            }
+
+
+        }
+        //NOT RUNNING ANDROID 6 OR GREATER
+        //Permissions allowed at install time no need to check
         getContacts();
-        Intent add = new Intent(this, ProfileActivity.class);
-        startActivity(add);
-        super.onListItemClick(l, v, position, id);
+        Intent edit = new Intent(this, ProfileActivity.class);
+        startActivity(edit);
     }
 
     /**
@@ -382,7 +437,7 @@ public class MainActivity extends ListActivity {
                         phoneNumber = s + t;
 
                     }
-                    while (phoneNumber.contains(" ")){
+                    while (phoneNumber.contains(" ")) {
                         int ind = phoneNumber.indexOf(" ");
                         String s = phoneNumber.substring(0, ind);
                         String t = phoneNumber.substring(ind + 1, phoneNumber.length());
@@ -401,7 +456,7 @@ public class MainActivity extends ListActivity {
             for (int i = 0; i < size - 1; i++) {
                 if (contacts.get(i).getName().equals(contacts.get(i + 1).getName())) {
                     if (contacts.get(i).getPhoneNumber().equals(contacts.get(i + 1).getPhoneNumber())) {
-                        con.remove(i+1); // if contact has same number and name remove from list
+                        con.remove(i + 1); // if contact has same number and name remove from list
                         i--;
                         size--;
                     }
@@ -420,12 +475,16 @@ public class MainActivity extends ListActivity {
      * @param phoneNumber - person sending the call or text message.
      * @param ring        - whether the phone is receiving a call or text
      */
-    public static void checkToRing(String phoneNumber, boolean ring) {
+    public static void checkToRing(String phoneNumber, boolean ring, Context cont) {
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int min = calendar.get(Calendar.MINUTE);
         int day = calendar.get(Calendar.DAY_OF_WEEK);
         Log.d("CheckToRing", "Checking");
+
+
+        Log.d("Size", "" + profiles.size());
+
         for (Profile p : profiles) {
             boolean r;
             if (ring)
@@ -539,7 +598,6 @@ public class MainActivity extends ListActivity {
             audioManager.setStreamVolume(AudioManager.STREAM_RING, maxVolume, AudioManager.FLAG_ALLOW_RINGER_MODES + AudioManager.FLAG_PLAY_SOUND);
 
 
-
             ringtone.play();
         }
 
@@ -577,7 +635,7 @@ public class MainActivity extends ListActivity {
             player.setDataSource(context, notification);
             player.prepare();
             int duration = player.getDuration();
-            if(duration > 2000)
+            if (duration > 2000)
                 duration = 2000;
             Log.d("Duration", "" + duration);
 
@@ -633,15 +691,14 @@ public class MainActivity extends ListActivity {
                 volume = audioManager.getStreamVolume(AudioManager.STREAM_RING);
 
 
-
-
-                audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+            audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
         }
     }
 
     /**
      * Check to see if at least one profile is active at the current time
-     * @return  true if a profile is active.
+     *
+     * @return true if a profile is active.
      */
     public static boolean isActive() {
         Calendar calendar = Calendar.getInstance();
@@ -707,6 +764,7 @@ public class MainActivity extends ListActivity {
                     alarmManager.setExact(AlarmManager.RTC, System.currentTimeMillis() + x, pIntent1);
                 else
                     alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + x, pIntent1);
+                return;
             }
         }
 //
@@ -796,6 +854,15 @@ public class MainActivity extends ListActivity {
             alarmManager.cancel(pIntent1);
 
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent setIntent = new Intent(Intent.ACTION_MAIN);
+        setIntent.addCategory(Intent.CATEGORY_HOME);
+        setIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(setIntent);
+        backButton = true;
     }
 
 

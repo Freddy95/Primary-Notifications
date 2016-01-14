@@ -40,7 +40,7 @@ public class SmsListener extends BroadcastReceiver {
                     String phoneNumber = currentMessage.getDisplayOriginatingAddress();
                     Log.d("RECIEVED SMS", "Recieved sms");
 
-                    MainActivity.checkToRing(phoneNumber, false);
+                    MainActivity.checkToRing(phoneNumber, false, context);
 
                 } // end for loop
             } // bundle is null
