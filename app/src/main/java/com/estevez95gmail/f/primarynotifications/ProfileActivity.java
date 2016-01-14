@@ -18,7 +18,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class AddProfileActivity extends AppCompatActivity implements MultiChoiceDialog.OnDialogDismissListener{
+public class ProfileActivity extends AppCompatActivity implements MultiChoiceDialog.OnDialogDismissListener{
     boolean start, end, selectedContacts, selectedDays;
     int startMin, startHour, endMin, endHour;
     TextView submit;
@@ -31,11 +31,11 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
     CheckBox phoneCalls;
     boolean editing;
     int id;
-
+    static ProfileActivity fa;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
+        fa = this;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_profile);
         submit = (TextView)findViewById(R.id.submit_prof);
@@ -90,9 +90,8 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
         MainActivity.db.insertProfile(profile);
         profile.setId(MainActivity.db.getLast());
         MainActivity.fa.finish();
-        Intent main = new Intent(AddProfileActivity.this, MainActivity.class);
+        Intent main = new Intent(ProfileActivity.this, MainActivity.class);
         startActivity(main);
-        Toast.makeText(getApplicationContext(), "Make Sure to Mute Phone so Unwanted Notifications Don't Ring While Profile is Active.", Toast.LENGTH_LONG).show();
         finish();
 
     }
@@ -107,7 +106,7 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
         int minute = mcurrentTime.get(Calendar.MINUTE);
 
         TimePickerDialog mTimePicker;
-        mTimePicker = new TimePickerDialog(AddProfileActivity.this, new TimePickerDialog.OnTimeSetListener()
+        mTimePicker = new TimePickerDialog(ProfileActivity.this, new TimePickerDialog.OnTimeSetListener()
         {
             int callCount = 0;   //To track number of calls to onTimeSet()
 
@@ -154,7 +153,7 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
         int minute = mcurrentTime.get(Calendar.MINUTE);
 
         TimePickerDialog mTimePicker;
-        mTimePicker = new TimePickerDialog(AddProfileActivity.this, new TimePickerDialog.OnTimeSetListener()
+        mTimePicker = new TimePickerDialog(ProfileActivity.this, new TimePickerDialog.OnTimeSetListener()
         {
             int callCount = 0;   //To track number of calls to onTimeSet()
 
@@ -437,9 +436,10 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
         profile.setEnabled(true);
         profile.setSms(sms.isChecked());
         profile.setPhoneCalls(phoneCalls.isChecked());
-        MainActivity.db.updateProfile(profile, id+1);
+        id = profile.getId();
+        MainActivity.db.updateProfile(profile, id);
         MainActivity.fa.finish();
-        Intent main = new Intent(AddProfileActivity.this, MainActivity.class);
+        Intent main = new Intent(ProfileActivity.this, MainActivity.class);
         startActivity(main);
         finish();
     }
@@ -448,7 +448,7 @@ public class AddProfileActivity extends AppCompatActivity implements MultiChoice
         id = profile.getId();
         MainActivity.db.deleteProfile(id);
         MainActivity.fa.finish();
-        Intent main = new Intent(AddProfileActivity.this, MainActivity.class);
+        Intent main = new Intent(ProfileActivity.this, MainActivity.class);
         startActivity(main);
         finish();
     }

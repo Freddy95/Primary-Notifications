@@ -21,15 +21,15 @@ public class AlarmReceiver extends BroadcastReceiver {
         if(Build.VERSION.SDK_INT >= 19)
              MainActivity.alarmManager.setExact(AlarmManager.RTC, System.currentTimeMillis()+ 60000, MainActivity.pIntent1);
         else
-            MainActivity.alarmManager.set(AlarmManager.RTC, System.currentTimeMillis()+ 60000, MainActivity.pIntent1);
-
-        if(MainActivity.isActive() && !MainActivity.notified) {
+            MainActivity.alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + 60000, MainActivity.pIntent1);
+        boolean active = MainActivity.isActive();
+        if(active && !MainActivity.notified) {
             MainActivity.notified = true;
             MainActivity.notificationManager.notify(id, MainActivity.notif);
             MainActivity.mutePhone();
 
         }
-        else if(MainActivity.notified && !(MainActivity.isActive())){
+        else if(MainActivity.notified && !(active)){
             MainActivity.notificationManager.cancel(id);
             MainActivity.returnPhoneToState();
 

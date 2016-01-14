@@ -1,6 +1,5 @@
 package com.estevez95gmail.f.primarynotifications;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
@@ -8,7 +7,6 @@ import android.app.ListActivity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -24,7 +22,6 @@ import android.os.CountDownTimer;
 import android.provider.ContactsContract;
 
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -40,7 +37,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Date;
 
 
 import android.Manifest;
@@ -82,10 +78,13 @@ public class MainActivity extends ListActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if(ProfileActivity.fa != null)
+            ProfileActivity.fa.finish();
+
         notified = false;
-        Log.d("CHECK", "Does this work");
         Notification.Builder builder = new Notification.Builder(getApplicationContext());
         builder.setSmallIcon(R.mipmap.ic_launcher);
+
         builder.setContentTitle("Primary Notifications");
         builder.setContentText("Primary Notifications is active");
         Intent i = new Intent(this, MainActivity.class);
@@ -110,7 +109,8 @@ public class MainActivity extends ListActivity {
         }
         notif.flags = Notification.FLAG_ONGOING_EVENT;
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
+        if(fa != null)
+            fa.finish();
         fa = this;
         context = getApplicationContext();
         db = new ProfileDBHelper(this);
@@ -137,11 +137,12 @@ public class MainActivity extends ListActivity {
                     number = incomingNumber;
                     // If phone ringing
                     if (state == TelephonyManager.CALL_STATE_RINGING) {//phone is ringing
-                        if (ringtone != null) {
-                            if (ringtone.isPlaying())
-                                return;
-                        }
-                        checkToRing(number, true);
+                            if (ringtone != null) {
+                                if (ringtone.isPlaying())
+                                    return;
+                            }
+                            checkToRing(number, true);
+
                     }
                     if (state == TelephonyManager.CALL_STATE_OFFHOOK) {
                         if (audioManager != null) {
@@ -217,7 +218,7 @@ public class MainActivity extends ListActivity {
                     checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                 //WE HAVE PERMISSIONS ABLE TO ADD PROFILE
                 getContacts();
-                Intent add = new Intent(this, AddProfileActivity.class);
+                Intent add = new Intent(this, ProfileActivity.class);
                 startActivity(add);
                 return;
             } else {
@@ -234,7 +235,7 @@ public class MainActivity extends ListActivity {
         //NOT RUNNING ANDROID 6 OR GREATER
         //Permissions allowed at install time no need to check
         getContacts();
-        Intent add = new Intent(this, AddProfileActivity.class);
+        Intent add = new Intent(this, ProfileActivity.class);
         startActivity(add);
     }
 
@@ -252,6 +253,8 @@ public class MainActivity extends ListActivity {
 
     @Override
     public void onDestroy() {
+        alarmManager.cancel(pIntent1);
+        notificationManager.cancel(1010101011);
         super.onDestroy();
         Log.d("mainActivity", "onDestroy");
     }
@@ -336,7 +339,7 @@ public class MainActivity extends ListActivity {
         selectedProfile = profiles.get(position);
 
         getContacts();
-        Intent add = new Intent(this, AddProfileActivity.class);
+        Intent add = new Intent(this, ProfileActivity.class);
         startActivity(add);
         super.onListItemClick(l, v, position, id);
     }
@@ -520,6 +523,7 @@ public class MainActivity extends ListActivity {
                 return;
 
         if (!playing) {
+            playing = true;
 
             Log.d("Org", "Original " + audioManager.getRingerMode());
 
@@ -532,10 +536,11 @@ public class MainActivity extends ListActivity {
             audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
             Log.d("Ringer MODE NORMAL", "NORMAL MODE  " + AudioManager.RINGER_MODE_NORMAL);
             audioManager.getStreamVolume(AudioManager.STREAM_RING);
-            audioManager.setStreamVolume(AudioManager.STREAM_RING, maxVolume, AudioManager.FLAG_SHOW_UI + AudioManager.FLAG_PLAY_SOUND);
+            audioManager.setStreamVolume(AudioManager.STREAM_RING, maxVolume, AudioManager.FLAG_ALLOW_RINGER_MODES + AudioManager.FLAG_PLAY_SOUND);
 
 
-            playing = true;
+
+            ringtone.play();
         }
 
 
@@ -563,7 +568,7 @@ public class MainActivity extends ListActivity {
         audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
         Log.d("Ringer MODE NORMAL", "NORMAL MODE  " + AudioManager.RINGER_MODE_NORMAL);
         audioManager.getStreamVolume(AudioManager.STREAM_RING);
-        audioManager.setStreamVolume(AudioManager.STREAM_RING, maxVolume, AudioManager.FLAG_SHOW_UI + AudioManager.FLAG_PLAY_SOUND);
+        audioManager.setStreamVolume(AudioManager.STREAM_RING, maxVolume, AudioManager.FLAG_ALLOW_RINGER_MODES + AudioManager.FLAG_PLAY_SOUND);
         ringtone.play();
 
 
@@ -572,6 +577,11 @@ public class MainActivity extends ListActivity {
             player.setDataSource(context, notification);
             player.prepare();
             int duration = player.getDuration();
+            if(duration > 2000)
+                duration = 2000;
+            Log.d("Duration", "" + duration);
+
+
             //create timer
             CountDownTimer timer = new CountDownTimer(duration, 1) {
                 @Override
@@ -585,6 +595,7 @@ public class MainActivity extends ListActivity {
                     audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
                 }
             };
+            timer.start();
 
 
         } catch (IOException e) {
@@ -599,9 +610,11 @@ public class MainActivity extends ListActivity {
                 @Override
                 public void onFinish() {
                     ringtone.stop();
+
                     audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
                 }
             };
+            timer.start();
         }
 
 
@@ -618,15 +631,18 @@ public class MainActivity extends ListActivity {
             originalRingerMode = audioManager.getRingerMode();
             if (originalRingerMode == 2)
                 volume = audioManager.getStreamVolume(AudioManager.STREAM_RING);
-            if (Build.VERSION.SDK_INT >= 21) {
-                audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-                audioManager.setStreamVolume(AudioManager.STREAM_RING, 0, AudioManager.FLAG_ALLOW_RINGER_MODES);
-            } else
+
+
+
+
                 audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
         }
     }
 
-
+    /**
+     * Check to see if at least one profile is active at the current time
+     * @return  true if a profile is active.
+     */
     public static boolean isActive() {
         Calendar calendar = Calendar.getInstance();
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
@@ -671,7 +687,10 @@ public class MainActivity extends ListActivity {
         return false;
     }
 
-
+    /**
+     * Set up the alarm for one minute intervals to check whether or not app is active.
+     * If active should mute device and display on-going notification.
+     */
     public static void setUpAlarms() {
 
         cancelAlarms();//end all current running alarms
@@ -682,10 +701,12 @@ public class MainActivity extends ListActivity {
                 if (pIntent1 == null)
                     pIntent1 = PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                 Log.d("TIME IN MILIS", "" + System.currentTimeMillis() + 60000);
+                long x = System.currentTimeMillis() % 60000;
+                x = 60000 - x;
                 if (Build.VERSION.SDK_INT >= 19)
-                    alarmManager.setExact(AlarmManager.RTC, System.currentTimeMillis() + 60000, pIntent1);
+                    alarmManager.setExact(AlarmManager.RTC, System.currentTimeMillis() + x, pIntent1);
                 else
-                    alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + 60000, pIntent1);
+                    alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + x, pIntent1);
             }
         }
 //
@@ -742,13 +763,19 @@ public class MainActivity extends ListActivity {
 //        }
     }
 
+    /**
+     * After profile period ends phone should be reset to the original ringer
+     * mode it was before app was active.
+     */
     public static void returnPhoneToState() {
         audioManager.setRingerMode(originalRingerMode);
         if (originalRingerMode == 2)
             audioManager.setStreamVolume(AudioManager.STREAM_RING, volume, AudioManager.FLAG_ALLOW_RINGER_MODES);
     }
 
-
+    /**
+     * When activity starts check whether there is a profile that is active at the current time.
+     */
     public static void checkNotification() {
         if (isActive()) {
             notified = true;
@@ -760,17 +787,13 @@ public class MainActivity extends ListActivity {
         }
     }
 
+
+    /**
+     * Cancel  alarms
+     */
     public static void cancelAlarms() {
         if (alarmManager != null)
             alarmManager.cancel(pIntent1);
-        while (id >= 0) {
-            Intent intent = new Intent(context, AlarmReceiver.class);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
-                    id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            alarmManager.cancel(pendingIntent);
-            id--;
-        }
-        id = 0;
 
 
     }

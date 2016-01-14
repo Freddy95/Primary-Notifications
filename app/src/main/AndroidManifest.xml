@@ -36,7 +36,7 @@
         </activity>
         <activity
 
-            android:name=".AddProfileActivity"
+            android:name=".ProfileActivity"
             android:label="Profile"
             android:screenOrientation="portrait"
             android:theme="@style/ProfileActivityTheme"
