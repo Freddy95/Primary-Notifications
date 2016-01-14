@@ -99,7 +99,7 @@ public class MainActivity extends ListActivity {
             builder.setContentIntent(pIntent);
         }
 
-        if(alarmManager == null)
+        if (alarmManager == null)
             alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
 
@@ -361,6 +361,30 @@ public class MainActivity extends ListActivity {
                         String t = phoneNumber.substring(ind + 1, phoneNumber.length());
                         phoneNumber = s + t;
                     }
+                    while (phoneNumber.contains("(")) {
+
+                        int ind = phoneNumber.indexOf("(");
+                        String s = phoneNumber.substring(0, ind);
+                        String t = phoneNumber.substring(ind + 1, phoneNumber.length());
+                        phoneNumber = s + t;
+
+
+                    }
+
+                    while (phoneNumber.contains(")")) {
+
+                        int ind = phoneNumber.indexOf(")");
+                        String s = phoneNumber.substring(0, ind);
+                        String t = phoneNumber.substring(ind + 1, phoneNumber.length());
+                        phoneNumber = s + t;
+
+                    }
+                    while (phoneNumber.contains(" ")){
+                        int ind = phoneNumber.indexOf(" ");
+                        String s = phoneNumber.substring(0, ind);
+                        String t = phoneNumber.substring(ind + 1, phoneNumber.length());
+                        phoneNumber = s + t;
+                    }
 
                     Contact newContact = new Contact(name, phoneNumber);
 
@@ -374,7 +398,8 @@ public class MainActivity extends ListActivity {
             for (int i = 0; i < size - 1; i++) {
                 if (contacts.get(i).getName().equals(contacts.get(i + 1).getName())) {
                     if (contacts.get(i).getPhoneNumber().equals(contacts.get(i + 1).getPhoneNumber())) {
-                        con.remove(i); // if contact has same number and name remove from list
+                        con.remove(i+1); // if contact has same number and name remove from list
+                        i--;
                         size--;
                     }
                 }
@@ -650,17 +675,17 @@ public class MainActivity extends ListActivity {
     public static void setUpAlarms() {
 
         cancelAlarms();//end all current running alarms
-        for(Profile p : profiles){
-            if(p.isEnabled()){
-              Intent intent = new Intent(context, AlarmReceiver.class);
+        for (Profile p : profiles) {
+            if (p.isEnabled()) {
+                Intent intent = new Intent(context, AlarmReceiver.class);
 
-                if(pIntent1 == null)
+                if (pIntent1 == null)
                     pIntent1 = PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                 Log.d("TIME IN MILIS", "" + System.currentTimeMillis() + 60000);
-                if(Build.VERSION.SDK_INT >= 19)
-                    alarmManager.setExact(AlarmManager.RTC, System.currentTimeMillis()+ 60000, pIntent1);
+                if (Build.VERSION.SDK_INT >= 19)
+                    alarmManager.setExact(AlarmManager.RTC, System.currentTimeMillis() + 60000, pIntent1);
                 else
-                     alarmManager.set(AlarmManager.RTC, System.currentTimeMillis()+ 60000, pIntent1);
+                    alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + 60000, pIntent1);
             }
         }
 //
@@ -736,7 +761,7 @@ public class MainActivity extends ListActivity {
     }
 
     public static void cancelAlarms() {
-        if(alarmManager != null)
+        if (alarmManager != null)
             alarmManager.cancel(pIntent1);
         while (id >= 0) {
             Intent intent = new Intent(context, AlarmReceiver.class);
