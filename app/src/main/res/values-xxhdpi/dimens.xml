@@ -13,7 +13,15 @@
     <dimen name="SpaceBetweenDays">20dp</dimen>
     <dimen name="FrameRightMargin">70dp</dimen>
     <dimen name="FrameLeftMargin">60dp</dimen>
-
+    <dimen name="submitWidthAndHeight">90dp</dimen>
+    <dimen name="submitMarginTop">57dp</dimen>
+    <dimen name="startTimeMargin">0dp</dimen>
+    <dimen name="contactButtonWidth">175dp</dimen>
+    <dimen name="contactButtonHeight">60dp</dimen>
+    <dimen name="dayButtonWidth">140dp</dimen>
+    <dimen name="dayButtonHeight">55dp</dimen>
+    <dimen name="timeTextSize">25sp</dimen>
+    <dimen name="submitButtonMargin">50dp</dimen>
 
 
 </resources>

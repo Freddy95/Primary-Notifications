@@ -58,6 +58,7 @@ public class MainActivity extends ListActivity {
     static boolean playing;
     static Context context;
     static int id;
+    static int called;//if 0, ringtone should not be ringing
 
     final private int REQUEST_PERMISSIONS = 123;
 
@@ -69,6 +70,8 @@ public class MainActivity extends ListActivity {
 
     static PendingIntent pIntent1;
     static Notification notif;
+    static int prevRingerMode;
+    static int prevVolume;
     static NotificationManager notificationManager;
 
     static AlarmManager alarmManager;
@@ -76,14 +79,17 @@ public class MainActivity extends ListActivity {
     static ProfileDBHelper db;
     static boolean notified;
     static boolean backButton;
-    static boolean pIentent2;
+    static boolean alwaysSilent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
+        SmsListener.notified = 0;
         Intent intent = new Intent(this, KillNotificationService.class);
         startService(intent);
         backButton = false;
+
+        alwaysSilent = true;
+
         if (ProfileActivity.fa != null)
             ProfileActivity.fa.finish();
 
@@ -143,31 +149,49 @@ public class MainActivity extends ListActivity {
                     number = incomingNumber;
                     // If phone ringing
                     if (state == TelephonyManager.CALL_STATE_RINGING) {//phone is ringing
-                        if (ringtone != null) {
-                            if (ringtone.isPlaying())
-                                return;
+                        if(called == 0) {
+                            called = 1;
+                            Log.d("Ringing", "RINGING");
+                            if (ringtone != null) {
+                                if (ringtone.isPlaying())
+                                    return;
+                            }
+                            if (isActive()) {
+                                checkToRing(number, true, context);
+                            }
                         }
-                        checkToRing(number, true, context);
+
 
                     }
                     if (state == TelephonyManager.CALL_STATE_OFFHOOK) {
+                        called = 0;
                         if (audioManager != null) {
+                            if(isActive()) {
+                                if (ringtone != null) {
+                                    ringtone.stop();
+                                    playing = false;
 
-                            if (ringtone != null) {
-                                ringtone.stop();
-                                playing = false;
-
+                                }
+                                if (!alwaysSilent)
+                                    returnPhone();
+                                else
+                                    audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
                             }
-                            audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
 
                         }
 
                     }
                     if (state == TelephonyManager.CALL_STATE_IDLE) {
+                        called = 0;
 
                         if (audioManager != null) {
                             if (isActive()) {
-                                audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+
+                                if(!alwaysSilent)
+                                    returnPhone();
+                                else
+                                    audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+
                                 if (ringtone != null)
                                     ringtone.stop();
                                 playing = false;
@@ -480,6 +504,7 @@ public class MainActivity extends ListActivity {
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int min = calendar.get(Calendar.MINUTE);
         int day = calendar.get(Calendar.DAY_OF_WEEK);
+        silencePhone();
         Log.d("CheckToRing", "Checking");
 
 
@@ -571,6 +596,9 @@ public class MainActivity extends ListActivity {
 
             }
         }
+
+        returnPhone();
+
     }
 
     /**
@@ -609,70 +637,82 @@ public class MainActivity extends ListActivity {
      */
     public static void notificationRing() {
         //Toast.makeText(getApplicationContext(), "Ringing", Toast.LENGTH_SHORT).show();
-        if (ringtone != null) {
-            if (ringtone.isPlaying())
-                return;
-        }
+        if(SmsListener.notified == 0) {//Only ring notification once.
 
-        Log.d("Org", "Original " + audioManager.getRingerMode());
-
-
-        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        ringtone = RingtoneManager.getRingtone(context, notification);
+            if (ringtone != null) {
+                if (ringtone.isPlaying())
+                    return;
+            }
+            SmsListener.notified = 1;
+            Log.d("Org", "Original " + audioManager.getRingerMode());
 
 
-        int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_RING);
-
-        audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
-        Log.d("Ringer MODE NORMAL", "NORMAL MODE  " + AudioManager.RINGER_MODE_NORMAL);
-        audioManager.getStreamVolume(AudioManager.STREAM_RING);
-        audioManager.setStreamVolume(AudioManager.STREAM_RING, maxVolume, AudioManager.FLAG_ALLOW_RINGER_MODES + AudioManager.FLAG_PLAY_SOUND);
-        ringtone.play();
+            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            ringtone = RingtoneManager.getRingtone(context, notification);
 
 
-        MediaPlayer player = new MediaPlayer();
-        try {
-            player.setDataSource(context, notification);
-            player.prepare();
-            int duration = player.getDuration();
-            if (duration > 2000)
-                duration = 2000;
-            Log.d("Duration", "" + duration);
+            int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_RING);
+
+            audioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+            Log.d("Ringer MODE NORMAL", "NORMAL MODE  " + AudioManager.RINGER_MODE_NORMAL);
+            audioManager.getStreamVolume(AudioManager.STREAM_RING);
+            audioManager.setStreamVolume(AudioManager.STREAM_RING, maxVolume, AudioManager.FLAG_ALLOW_RINGER_MODES + AudioManager.FLAG_PLAY_SOUND);
+            ringtone.play();
 
 
-            //create timer
-            CountDownTimer timer = new CountDownTimer(duration, 1) {
-                @Override
-                public void onTick(long millisUntilFinished) {
-
-                }
-
-                @Override
-                public void onFinish() {
-                    ringtone.stop();
-                    audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
-                }
-            };
-            timer.start();
+            MediaPlayer player = new MediaPlayer();
+            try {
+                player.setDataSource(context, notification);
+                player.prepare();
+                int duration = player.getDuration();
+                if (duration > 2000)
+                    duration = 2000;
+                Log.d("Duration", "" + duration);
 
 
-        } catch (IOException e) {
-            //Error make timer last less
+                //create timer
+                CountDownTimer timer = new CountDownTimer(duration, 1) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
 
-            CountDownTimer timer = new CountDownTimer(1000, 1) {
-                @Override
-                public void onTick(long millisUntilFinished) {
+                    }
 
-                }
+                    @Override
+                    public void onFinish() {
+                        ringtone.stop();
+                        if (!alwaysSilent)
+                            returnPhone();
+                        else
+                            audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+                        SmsListener.notified = 0;
+                    }
+                };
+                timer.start();
 
-                @Override
-                public void onFinish() {
-                    ringtone.stop();
 
-                    audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
-                }
-            };
-            timer.start();
+            } catch (IOException e) {
+                //Error make timer last less
+
+                CountDownTimer timer = new CountDownTimer(1000, 1) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        ringtone.stop();
+
+                        if (!alwaysSilent)
+                            returnPhone();
+                        else
+                            audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+
+                        SmsListener.notified = 0;
+                    }
+                };
+                timer.start();
+            }
         }
 
 
@@ -705,7 +745,7 @@ public class MainActivity extends ListActivity {
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int min = calendar.get(Calendar.MINUTE);
         int day = calendar.get(Calendar.DAY_OF_WEEK);
-        Log.d("CheckToRing", "Checking");
+        Log.d("Check if enabled ", "Checking");
         for (Profile p : profiles) {
 
 
@@ -842,6 +882,7 @@ public class MainActivity extends ListActivity {
         } else {
             notified = false;
             notificationManager.cancel(1010101011);
+            returnPhoneToState();
         }
     }
 
@@ -863,6 +904,35 @@ public class MainActivity extends ListActivity {
         setIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(setIntent);
         backButton = true;
+    }
+
+    /**
+     * This function checks to see if phone is not on silent while app is active.
+     * This may mean user wants to recieve notifications from other apps such as
+     * email, fb message, etc. Subject to change. SHOULD ONLY BE CALLED IF APP IS ACTIVE.
+     */
+    public static void silencePhone(){
+        if(audioManager != null){
+            if(audioManager.getRingerMode() != 0) {
+                alwaysSilent = false;
+                prevRingerMode = audioManager.getRingerMode();
+                if(prevRingerMode == 2)
+                    prevVolume = audioManager.getStreamVolume(AudioManager.STREAM_RING);
+                audioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+            }else
+                alwaysSilent = true;
+        }
+    }
+
+    /**
+     *  Return phone to state before phone call or text.
+     *  Should only be called if always silent is false.
+     */
+    public static void returnPhone(){
+        audioManager.setRingerMode(prevRingerMode);
+        if(prevRingerMode == 2)
+            audioManager.setStreamVolume(AudioManager.STREAM_RING, prevVolume, AudioManager.FLAG_ALLOW_RINGER_MODES);
+
     }
 
 

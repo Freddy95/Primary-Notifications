@@ -9,4 +9,13 @@
     <dimen name="ProfileActivityMarginTop">25dp</dimen>
     <dimen name="ProfileActivityButtonMargin">50dp</dimen>
     <dimen name="CheckBoxMargin">15dp</dimen>
+    <dimen name="submitWidthAndHeight">100dp</dimen>
+    <dimen name="submitMarginTop">57dp</dimen>
+    <dimen name="submitButtonMargin">60dp</dimen>
+    <dimen name="startTimeMargin">10dp</dimen>
+    <dimen name="contactButtonWidth">180dp</dimen>
+    <dimen name="contactButtonHeight">60dp</dimen>
+    <dimen name="dayButtonWidth">145dp</dimen>
+    <dimen name="dayButtonHeight">55dp</dimen>
+    <dimen name="timeTextSize">28sp</dimen>
 </resources>

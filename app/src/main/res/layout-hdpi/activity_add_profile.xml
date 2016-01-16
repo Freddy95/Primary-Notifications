@@ -4,118 +4,121 @@
     tools:context=".ProfileActivity"
    >
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Set Start Time"
-            android:id="@+id/setStartTime"
-            android:paddingTop="0dp"
-            android:paddingLeft="0dp"
-            android:clickable="true"
-            android:onClick="showStartTime"
-            android:layout_gravity="left|top"
-            android:textSize="20dp"
-            android:textColor="#3399FF"
-            android:layout_marginTop="25dp"
-            android:layout_alignLeft="@+id/selectContacts"
-            android:layout_alignStart="@+id/selectContacts" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Set End Time"
-            android:id="@+id/setEndTime"
-            android:layout_gravity="right|top"
-            android:paddingTop="0dp"
-            android:paddingRight="0dp"
-            android:textSize="20dp"
-            android:clickable="true"
-            android:layout_marginTop="25dp"
-            android:onClick="showEndTime"
-            android:textColor="#FF3300"
-            android:layout_alignParentTop="true"
-            android:layout_alignLeft="@+id/phoneCalls"
-            android:layout_alignStart="@+id/phoneCalls" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="CANCEL"
-            android:id="@+id/cancel_prof"
-            android:clickable="true"
-            android:textSize="20dp"
-            android:textColor="#000000"
-            android:layout_alignTop="@+id/submit_prof"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginLeft="@dimen/FrameLeftMargin"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="SUBMIT"
-            android:id="@+id/submit_prof"
-            android:textSize="20dp"
-            android:textColor="#000000"
-            android:clickable="true"
-            android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginRight="@dimen/FrameRightMargin"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Select Contacts"
-            android:id="@+id/selectContacts"
-            android:layout_gravity="left|top"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="80dp"
-            android:clickable="true"
-            android:onClick="selectContacts"
-            android:textSize="20dp"
-            android:textColor="#000000" />
-
-        <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Text Messages"
-            android:id="@+id/SMS"
-            android:textSize="20dp"
-            android:layout_alignTop="@+id/selectDays"
-            android:layout_alignLeft="@+id/phoneCalls"
-            android:layout_alignStart="@+id/phoneCalls"
-            android:layout_alignBottom="@+id/selectDays"
-            android:onClick="smsToggle"/>
-
-
-        <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Phone Calls"
-            android:id="@+id/phoneCalls"
-            android:textSize="20dp"
-            android:layout_marginLeft="10dp"
-            android:layout_alignTop="@+id/selectContacts"
-            android:layout_toRightOf="@+id/selectContacts"
-            android:layout_toEndOf="@+id/selectContacts"
-            android:layout_above="@+id/selectDays"
-            android:onClick="phoneCallsToggle"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Set Start Time"
+        android:id="@+id/setStartTime"
+        android:paddingTop="0dp"
+        android:paddingLeft="0dp"
+        android:clickable="true"
+        android:onClick="showStartTime"
+        android:layout_gravity="left|top"
+        android:textSize="@dimen/TimeViewSize"
+        android:textColor="#3399FF"
+        android:layout_marginTop="25dp"
+        android:layout_alignLeft="@+id/selectContacts"
+        android:layout_alignStart="@+id/selectContacts"
+        android:layout_marginLeft="@dimen/startTimeMargin"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Set End Time"
+        android:id="@+id/setEndTime"
+        android:layout_gravity="right|top"
+        android:paddingTop="0dp"
+        android:paddingRight="0dp"
+        android:textSize="@dimen/timeTextSize"
+        android:clickable="true"
+        android:layout_marginTop="25dp"
+        android:onClick="showEndTime"
+        android:textColor="#FF3300"
+        android:layout_alignParentTop="true"
+        android:layout_alignLeft="@+id/phoneCalls"
+        android:layout_alignStart="@+id/phoneCalls" />
+
+
+
+    <ImageView
+        android:layout_width="@dimen/contactButtonWidth"
+        android:layout_height="@dimen/contactButtonHeight"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Select Days"
-        android:id="@+id/selectDays"
+        android:src="@drawable/selectcontacts"
+        android:id="@+id/selectContacts"
+        android:layout_marginLeft="15dp"
+        android:layout_gravity="left|top"
+        android:layout_marginTop="24dp"
+        android:clickable="true"
+        android:onClick="selectContacts"
+        android:textSize="@dimen/ProfileActivityTextSize"
         android:textColor="#000000"
-        android:textSize="20dp"
-        android:layout_marginTop="26dp"
+        android:layout_below="@+id/setStartTime"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Text"
+        android:id="@+id/SMS"
+        android:textSize="@dimen/ProfileActivityTextSize"
+        android:layout_alignTop="@+id/selectDays"
+        android:layout_alignLeft="@+id/phoneCalls"
+        android:layout_alignStart="@+id/phoneCalls"
+        android:layout_alignBottom="@+id/selectDays"
+        android:onClick="smsToggle"/>
+
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Phone Calls"
+        android:id="@+id/phoneCalls"
+        android:textSize="@dimen/ProfileActivityTextSize"
+        android:layout_marginLeft="10dp"
+        android:layout_alignTop="@+id/selectContacts"
+        android:layout_toRightOf="@+id/selectContacts"
+        android:layout_toEndOf="@+id/selectContacts"
+        android:layout_above="@+id/selectDays"
+        android:onClick="phoneCallsToggle"/>
+
+    <ImageView
+        android:layout_width="@dimen/dayButtonWidth"
+        android:layout_height="@dimen/dayButtonHeight"
+        android:src="@drawable/selectdays"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:id="@+id/selectDays"
+        android:clickable="true"
+        android:onClick="selectDays"
         android:layout_below="@+id/selectContacts"
         android:layout_alignLeft="@+id/selectContacts"
-        android:layout_alignStart="@+id/selectContacts"
+        android:layout_alignStart="@+id/selectContacts" />
+
+
+    <ImageView
+        android:layout_width="@dimen/submitWidthAndHeight"
+        android:layout_height="@dimen/submitWidthAndHeight"
+        android:src="@drawable/checkmark"
         android:clickable="true"
-        android:onClick="selectDays"/>
+        android:id="@+id/submit_prof"
+        android:layout_below="@+id/SMS"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="@dimen/submitMarginTop"
+        android:layout_marginRight="@dimen/submitButtonMargin"/>
+    <ImageView
+        android:layout_width="@dimen/submitWidthAndHeight"
+        android:layout_height="@dimen/submitWidthAndHeight"
+        android:src="@drawable/xmark"
+        android:id="@+id/cancel_prof"
+        android:layout_alignTop="@+id/submit_prof"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginLeft="@dimen/submitButtonMargin"
+        android:clickable="true"/>
+
+
 
 
 </RelativeLayout>

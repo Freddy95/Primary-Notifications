@@ -13,4 +13,12 @@
     <dimen name="FrameLeftMargin">65dp</dimen>
     <dimen name="SpaceBetweenDays">20dp</dimen>
     <dimen name="ProfileActivityButtonMargin">60dp</dimen>
+    <dimen name="submitWidthAndHeight">100dp</dimen>
+    <dimen name="submitMarginTop">70dp</dimen>
+    <dimen name="startTimeMargin">5dp</dimen>
+    <dimen name="contactButtonWidth">180dp</dimen>
+    <dimen name="contactButtonHeight">70dp</dimen>
+    <dimen name="dayButtonWidth">160dp</dimen>
+    <dimen name="dayButtonHeight">65dp</dimen>
+    <dimen name="timeTextSize">28sp</dimen>
 </resources>

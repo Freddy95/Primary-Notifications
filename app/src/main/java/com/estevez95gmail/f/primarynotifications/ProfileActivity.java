@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -21,8 +22,8 @@ import java.util.Calendar;
 public class ProfileActivity extends AppCompatActivity implements MultiChoiceDialog.OnDialogDismissListener{
     boolean start, end, selectedContacts, selectedDays;
     int startMin, startHour, endMin, endHour;
-    TextView submit;
-    TextView textView1;
+    ImageView submit;
+    ImageView cancel;
     ArrayList<Contact> contacts;
     TextView startView;
     TextView endView;
@@ -38,7 +39,7 @@ public class ProfileActivity extends AppCompatActivity implements MultiChoiceDia
         fa = this;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_profile);
-        submit = (TextView)findViewById(R.id.submit_prof);
+        submit = (ImageView)findViewById(R.id.submit_prof);
         if(MainActivity.selectedProfile == null) {//If there is no selected profile we are creating a new profile
             profile = new Profile();
             editing = false;
@@ -255,7 +256,7 @@ public class ProfileActivity extends AppCompatActivity implements MultiChoiceDia
         endHour = 60;
         sms = (CheckBox) findViewById(R.id.SMS);
         phoneCalls = (CheckBox) findViewById(R.id.phoneCalls);
-        textView1 = (TextView) findViewById(R.id.cancel_prof);
+        cancel = (ImageView) findViewById(R.id.cancel_prof);
 
     }
 
@@ -270,8 +271,7 @@ public class ProfileActivity extends AppCompatActivity implements MultiChoiceDia
         end = true;
         selectedDays = true;
         selectedContacts = true;
-        textView1 = (TextView) findViewById(R.id.cancel_prof);
-        textView1.setText("DELETE");
+        cancel = (ImageView) findViewById(R.id.cancel_prof);
 
         startMin = profile.getStartMinute();
         startHour = profile.getStartHour();
@@ -299,7 +299,7 @@ public class ProfileActivity extends AppCompatActivity implements MultiChoiceDia
             }
         });
 
-        textView1.setOnClickListener(new View.OnClickListener() {
+        cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 returnHome();
@@ -332,7 +332,7 @@ public class ProfileActivity extends AppCompatActivity implements MultiChoiceDia
             }
         });
 
-        textView1.setOnClickListener(new View.OnClickListener() {
+        cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 deleteProfile();
