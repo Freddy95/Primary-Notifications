@@ -46,12 +46,15 @@ public class ProfileActivity extends AppCompatActivity implements MultiChoiceDia
             submit.setEnabled(false);
             init();
             initHandlers();
+            submit.setVisibility(View.INVISIBLE);
+
         }else{//Editing selected profile
             profile = MainActivity.selectedProfile;
             id = MainActivity.profiles.indexOf(profile);
             editing = true;
             initEdit();
             initEditHandlers();
+            submit.setVisibility(View.VISIBLE);
         }
 
 
@@ -69,7 +72,6 @@ public class ProfileActivity extends AppCompatActivity implements MultiChoiceDia
         return true;
 
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -398,18 +400,26 @@ public class ProfileActivity extends AppCompatActivity implements MultiChoiceDia
     public void checkSubmit(){
         if(profile.getContacts().isEmpty()){
             submit.setEnabled(false);
+            submit.setVisibility(View.INVISIBLE);
             return;
         }if(!end || !start){
             submit.setEnabled(false);
+            submit.setVisibility(View.INVISIBLE);
+
             return;
         }if(!(profile.hasDay())){
             submit.setEnabled(false);
+            submit.setVisibility(View.INVISIBLE);
+
             return;
         }
         if(!(profile.isSms() || profile.isPhoneCalls())){
             submit.setEnabled(false);
+            submit.setVisibility(View.INVISIBLE);
+
             return;
         }
+        submit.setVisibility(View.VISIBLE);
         submit.setEnabled(true);
 
     }

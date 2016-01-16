@@ -10,7 +10,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Start Time"
         android:id="@+id/startTime"
-        android:layout_margin="15dp"
+        android:layout_margin="10dp"
         android:textSize="@dimen/TimeViewSize"
         android:textColor="#3399FF"/>
 
@@ -37,7 +37,7 @@
         android:layout_alignTop="@+id/startTime"
         android:layout_toRightOf="@+id/to"
         android:textColor="#FF3300"
-        android:layout_marginLeft="15dp"/>
+        android:layout_marginLeft="10dp"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -60,7 +60,8 @@
         android:layout_below="@id/startTime"
         android:layout_alignLeft="@+id/startTime"
         android:layout_alignStart="@+id/startTime"
-        android:textSize="@dimen/DayViewSize" />
+        android:textSize="@dimen/DayViewSize"
+        android:layout_marginLeft="2dp"/>
 
     <TextView
         android:layout_width="wrap_content"

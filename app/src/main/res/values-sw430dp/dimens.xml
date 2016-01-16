@@ -2,26 +2,26 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
-    <dimen name="TimeViewSize">24sp</dimen>
-    <dimen name="DayViewSize">16sp</dimen>
+    <dimen name="TimeViewSize">32sp</dimen>
+    <dimen name="DayViewSize">21sp</dimen>
     <dimen name="FrameMargin">16dp</dimen>
-    <dimen name="ProfileTextSize">23sp</dimen>
-    <dimen name="ProfileActivityTextSize">22sp</dimen>
+    <dimen name="ProfileTextSize">27sp</dimen>
+    <dimen name="ProfileActivityTextSize">27sp</dimen>
     <dimen name="ProfileActivityMarginTop">25dp</dimen>
     <dimen name="CheckBoxMargin">17dp</dimen>
-    <dimen name="SpaceBetweenDays">18dp</dimen>
+    <dimen name="SpaceBetweenDays">20dp</dimen>
     <dimen name="ProfileActivityButtonMargin">60dp</dimen>
     <dimen name="FrameRightMargin">70dp</dimen>
     <dimen name="FrameLeftMargin">60dp</dimen>
     <dimen name="submitWidthAndHeight">100dp</dimen>
-    <dimen name="submitMarginTop">57dp</dimen>
+    <dimen name="submitMarginTop">75dp</dimen>
     <dimen name="startTimeMargin">0dp</dimen>
-    <dimen name="contactButtonWidth">170dp</dimen>
-    <dimen name="contactButtonHeight">60dp</dimen>
-    <dimen name="dayButtonWidth">135dp</dimen>
-    <dimen name="dayButtonHeight">55dp</dimen>
-    <dimen name="timeTextSize">24sp</dimen>
-    <dimen name="submitButtonMargin">40dp</dimen>
+    <dimen name="contactButtonWidth">190dp</dimen>
+    <dimen name="contactButtonHeight">80dp</dimen>
+    <dimen name="dayButtonWidth">155dp</dimen>
+    <dimen name="dayButtonHeight">75dp</dimen>
+    <dimen name="timeTextSize">28sp</dimen>
+    <dimen name="submitButtonMargin">60dp</dimen>
 
 
 </resources>

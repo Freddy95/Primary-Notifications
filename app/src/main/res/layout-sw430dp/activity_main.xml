@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/frag">
 
-    <TextView android:text="640dp"
+    <TextView android:text="Profiles"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textView"

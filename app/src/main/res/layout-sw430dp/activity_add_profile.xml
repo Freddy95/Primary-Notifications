@@ -76,7 +76,7 @@
         android:text="Phone Calls"
         android:id="@+id/phoneCalls"
         android:textSize="@dimen/ProfileActivityTextSize"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="20dp"
         android:layout_alignTop="@+id/selectContacts"
         android:layout_toRightOf="@+id/selectContacts"
         android:layout_toEndOf="@+id/selectContacts"
