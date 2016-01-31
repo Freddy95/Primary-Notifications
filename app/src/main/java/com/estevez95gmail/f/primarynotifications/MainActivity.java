@@ -319,27 +319,32 @@ public class MainActivity extends ListActivity {
     /**
      * Ask for specified permission.
      *
-     * @param permission - permission to ask for
+     * @param permissions - permission to ask for
      */
-    public void askForPermissions(String permission) {
+    public void askForPermissions(ArrayList<String> permissions) {
         if (Build.VERSION.SDK_INT >= 23) {
             // Check for Rationale Option
-            if (!shouldShowRequestPermissionRationale(permission)) {
-                if (readContacts.equals(permission))
-                    Toast.makeText(this, "Need Access Contacts to get Contact List", Toast.LENGTH_SHORT).show();
-                else if (readExternalStorage.equals(permission))
-                    Toast.makeText(this, "Need Access to Storage to save and update profiles", Toast.LENGTH_SHORT).show();
-                else if (readPhoneState.equals(permission))
-                    Toast.makeText(this, "Need Access to Phone to listen for Incoming Calls", Toast.LENGTH_SHORT).show();
-                else if (receiveSms.equals(permission))
-                    Toast.makeText(this, "Need Access to SMS messages to listen for Incoming Messages", Toast.LENGTH_SHORT).show();
-                else if (writeExternalStorage.equals(permission))
-                    Toast.makeText(this, "Need Access to Storage to save profiles", Toast.LENGTH_SHORT).show();
-
-
+            for(int i = 0; i < permissions.size(); i++){
+                String permission = permissions.get(i);
+                if (!shouldShowRequestPermissionRationale(permission)) {
+                    if (permission.equals(readContacts))
+                        Toast.makeText(this, "Need Access Contacts to get Contact List", Toast.LENGTH_LONG).show();
+                    else if (permission.equals(readExternalStorage))
+                        Toast.makeText(this, "Need Access to Storage to save and update profiles", Toast.LENGTH_LONG).show();
+                    else if (permission.equals(readPhoneState))
+                        Toast.makeText(this, "Need Access to Phone to listen for Incoming Calls", Toast.LENGTH_LONG).show();
+                    else if (permission.equals(receiveSms))
+                        Toast.makeText(this, "Need Access to SMS messages to listen for Incoming Messages", Toast.LENGTH_LONG).show();
+                    else if (permission.equals(writeExternalStorage))
+                        Toast.makeText(this, "Need Access to Storage to save profiles", Toast.LENGTH_LONG).show();
+                }
             }
+
             //Ask for permission
-            requestPermissions(new String[]{permission}, REQUEST_PERMISSIONS);
+            String[] arr = new String[permissions.size()];
+            arr = permissions.toArray(arr);
+
+            requestPermissions(arr, REQUEST_PERMISSIONS);
 
         }
 
@@ -361,26 +366,29 @@ public class MainActivity extends ListActivity {
      */
     public void checkCurrentPermissions() {
         if (Build.VERSION.SDK_INT >= 23) {
-            if (checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-                askForPermissions(Manifest.permission.READ_CONTACTS);
 
+            ArrayList<String> permissions = new ArrayList<>();
+            if (checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+                permissions.add(Manifest.permission.READ_CONTACTS);
 
             }
             if (checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-                askForPermissions(Manifest.permission.READ_PHONE_STATE);
+                permissions.add(Manifest.permission.READ_PHONE_STATE);
             }
             if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                askForPermissions(Manifest.permission.READ_EXTERNAL_STORAGE);
+                permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+
 
 
             }
             if (checkSelfPermission(Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED) {
-                askForPermissions(Manifest.permission.RECEIVE_SMS);
+                permissions.add(Manifest.permission.RECEIVE_SMS);
             }
             if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                askForPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-
+                permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
             }
+
+            askForPermissions(permissions);
         }
 
 
