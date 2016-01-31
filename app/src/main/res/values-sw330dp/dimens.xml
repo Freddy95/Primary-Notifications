@@ -19,7 +19,12 @@
     <dimen name="contactButtonHeight">60dp</dimen>
     <dimen name="dayButtonWidth">120dp</dimen>
     <dimen name="dayButtonHeight">55dp</dimen>
-    <dimen name="timeTextSize">22sp</dimen>
+    <dimen name="timeTextSize">20sp</dimen>
     <dimen name="submitButtonMargin">40dp</dimen>
+    <dimen name="buttonTextSize">20sp</dimen>
+    <dimen name="dayWidth">120dp</dimen>
+    <dimen name="dayHeight">38dp</dimen>
+    <dimen name="conHeight">38dp</dimen>
+    <dimen name="conWidth">160dp</dimen>
 
 </resources>

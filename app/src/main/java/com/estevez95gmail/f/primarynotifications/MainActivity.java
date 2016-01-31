@@ -48,7 +48,6 @@ public class MainActivity extends ListActivity {
     //HOLDS PROFILES USER CREATES
     static ArrayList<Profile> profiles = new ArrayList<>();
     static Profile selectedProfile;
-    ListView list;
     static ArrayList<Contact> contacts;
     static Ringtone ringtone;
     static int originalRingerMode;
@@ -62,7 +61,7 @@ public class MainActivity extends ListActivity {
 
     final private int REQUEST_PERMISSIONS = 123;
 
-    final String recieveSms = Manifest.permission.READ_SMS;
+    final String receiveSms = Manifest.permission.READ_SMS;
     final String readPhoneState = Manifest.permission.READ_PHONE_STATE;
     final String readExternalStorage = Manifest.permission.READ_EXTERNAL_STORAGE;
     final String readContacts = Manifest.permission.READ_CONTACTS;
@@ -256,6 +255,7 @@ public class MainActivity extends ListActivity {
                 getContacts();
                 Intent add = new Intent(this, ProfileActivity.class);
                 startActivity(add);
+                finish();
                 return;
             } else {
 
@@ -273,6 +273,7 @@ public class MainActivity extends ListActivity {
         getContacts();
         Intent add = new Intent(this, ProfileActivity.class);
         startActivity(add);
+        finish();
     }
 
     @Override
@@ -330,7 +331,7 @@ public class MainActivity extends ListActivity {
                     Toast.makeText(this, "Need Access to Storage to save and update profiles", Toast.LENGTH_SHORT).show();
                 else if (readPhoneState.equals(permission))
                     Toast.makeText(this, "Need Access to Phone to listen for Incoming Calls", Toast.LENGTH_SHORT).show();
-                else if (recieveSms.equals(permission))
+                else if (receiveSms.equals(permission))
                     Toast.makeText(this, "Need Access to SMS messages to listen for Incoming Messages", Toast.LENGTH_SHORT).show();
                 else if (writeExternalStorage.equals(permission))
                     Toast.makeText(this, "Need Access to Storage to save profiles", Toast.LENGTH_SHORT).show();
@@ -404,6 +405,7 @@ public class MainActivity extends ListActivity {
                 getContacts();
                 Intent edit = new Intent(this, ProfileActivity.class);
                 startActivity(edit);
+                finish();
                 return;
             } else {
 
@@ -421,6 +423,7 @@ public class MainActivity extends ListActivity {
         getContacts();
         Intent edit = new Intent(this, ProfileActivity.class);
         startActivity(edit);
+        finish();
     }
 
     /**

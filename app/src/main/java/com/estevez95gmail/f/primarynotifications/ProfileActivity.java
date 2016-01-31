@@ -3,15 +3,17 @@ package com.estevez95gmail.f.primarynotifications;
 
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -20,10 +22,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 public class ProfileActivity extends AppCompatActivity implements MultiChoiceDialog.OnDialogDismissListener{
-    boolean start, end, selectedContacts, selectedDays;
+    boolean start, end;
     int startMin, startHour, endMin, endHour;
-    ImageView submit;
-    ImageView cancel;
+    Button submit;
+    Button cancel;
+    Button cons;
+    Button days;
     ArrayList<Contact> contacts;
     TextView startView;
     TextView endView;
@@ -34,19 +38,21 @@ public class ProfileActivity extends AppCompatActivity implements MultiChoiceDia
     int id;
     static ProfileActivity fa;
 
+    static final String COLOR_WHITE = "#ffffff";
+    static final String COLOR_GREEN = "#d6f5d6";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         fa = this;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_profile);
-        submit = (ImageView)findViewById(R.id.submit_prof);
+        submit = (Button)findViewById(R.id.submit_prof);
         if(MainActivity.selectedProfile == null) {//If there is no selected profile we are creating a new profile
             profile = new Profile();
             editing = false;
             submit.setEnabled(false);
             init();
             initHandlers();
-            submit.setVisibility(View.INVISIBLE);
 
         }else{//Editing selected profile
             profile = MainActivity.selectedProfile;
@@ -54,7 +60,6 @@ public class ProfileActivity extends AppCompatActivity implements MultiChoiceDia
             editing = true;
             initEdit();
             initEditHandlers();
-            submit.setVisibility(View.VISIBLE);
         }
 
 
@@ -62,7 +67,7 @@ public class ProfileActivity extends AppCompatActivity implements MultiChoiceDia
 
 
 
-        checkSubmit();
+      //  checkSubmit();
     }
 
     @Override
@@ -250,15 +255,16 @@ public class ProfileActivity extends AppCompatActivity implements MultiChoiceDia
         contacts = new ArrayList<>();
         start = false;
         end = false;
-        selectedDays =false;
-        selectedContacts = false;
+
         startMin = 0;
         startHour = 0;
         endMin = 24;
         endHour = 60;
+        cons = (Button) findViewById(R.id.selectContacts);
+        days = (Button) findViewById(R.id.selectDays);
         sms = (CheckBox) findViewById(R.id.SMS);
         phoneCalls = (CheckBox) findViewById(R.id.phoneCalls);
-        cancel = (ImageView) findViewById(R.id.cancel_prof);
+        cancel = (Button) findViewById(R.id.cancel_prof);
 
     }
 
@@ -271,10 +277,9 @@ public class ProfileActivity extends AppCompatActivity implements MultiChoiceDia
         contacts = new ArrayList<>();
         start = true;
         end = true;
-        selectedDays = true;
-        selectedContacts = true;
-        cancel = (ImageView) findViewById(R.id.cancel_prof);
 
+        cancel = (Button) findViewById(R.id.cancel_prof);
+        cancel.setText("Delete");
         startMin = profile.getStartMinute();
         startHour = profile.getStartHour();
         endMin = profile.getEndMinute();
@@ -284,6 +289,18 @@ public class ProfileActivity extends AppCompatActivity implements MultiChoiceDia
         phoneCalls = (CheckBox) findViewById(R.id.phoneCalls);
         sms.setChecked(profile.isSms());
         phoneCalls.setChecked(profile.isPhoneCalls());
+
+        cons = (Button) findViewById(R.id.selectContacts);
+        days = (Button) findViewById(R.id.selectDays);
+        if(!(profile.contacts.isEmpty())){ //if profile has contacts
+            Contact c = profile.contacts.get(0);
+            if(!(c.getPhoneNumber().equals("")) && !(c.getName().equals(""))){
+                cons.setBackgroundColor(Color.parseColor(COLOR_GREEN));
+            }
+        }
+
+
+        days.setBackgroundColor(Color.parseColor(COLOR_GREEN));
 
         updateTimeView(false);//update the end time view
         updateTimeView(true);//update the start time view
@@ -399,27 +416,32 @@ public class ProfileActivity extends AppCompatActivity implements MultiChoiceDia
      */
     public void checkSubmit(){
         if(profile.getContacts().isEmpty()){
-            submit.setEnabled(false);
-            submit.setVisibility(View.INVISIBLE);
-            return;
-        }if(!end || !start){
-            submit.setEnabled(false);
-            submit.setVisibility(View.INVISIBLE);
 
-            return;
-        }if(!(profile.hasDay())){
+           cons.setBackgroundColor(Color.parseColor(COLOR_WHITE));
+        }else if(!(profile.contacts.isEmpty())){ //if profile has contacts
+            Contact c = profile.contacts.get(0);
+            if(!(c.getPhoneNumber().equals("")) && !(c.getName().equals(""))){
+                cons.setBackgroundColor(Color.parseColor(COLOR_GREEN));
+            }else{
+                cons.setBackgroundColor(Color.parseColor(COLOR_WHITE));
+            }
+        }
+
+        if(!(profile.hasDay())){
             submit.setEnabled(false);
-            submit.setVisibility(View.INVISIBLE);
+            days.setBackgroundColor(Color.parseColor(COLOR_WHITE));
+            return;
+        }else{
+            days.setBackgroundColor(Color.parseColor(COLOR_GREEN));
+        }
+
+
+        if(!end || !start){
+            submit.setEnabled(false);
 
             return;
         }
-        if(!(profile.isSms() || profile.isPhoneCalls())){
-            submit.setEnabled(false);
-            submit.setVisibility(View.INVISIBLE);
 
-            return;
-        }
-        submit.setVisibility(View.VISIBLE);
         submit.setEnabled(true);
 
     }
@@ -467,6 +489,11 @@ public class ProfileActivity extends AppCompatActivity implements MultiChoiceDia
     }
 
 
+    public void onBackPressed(){
+        Intent main = new Intent(ProfileActivity.this, MainActivity.class);
+        startActivity(main);
+        finish();
+    }
 
 
 

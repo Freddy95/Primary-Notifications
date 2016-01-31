@@ -18,4 +18,9 @@
     <dimen name="dayButtonWidth">145dp</dimen>
     <dimen name="dayButtonHeight">55dp</dimen>
     <dimen name="timeTextSize">28sp</dimen>
+    <dimen name="buttonTextSize">18sp</dimen>
+    <dimen name="dayWidth">100dp</dimen>
+    <dimen name="dayHeight">38dp</dimen>
+    <dimen name="conHeight">38dp</dimen>
+    <dimen name="conWidth">150dp</dimen>
 </resources>

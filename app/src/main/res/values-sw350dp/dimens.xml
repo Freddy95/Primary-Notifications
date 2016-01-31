@@ -21,7 +21,12 @@
     <dimen name="dayButtonWidth">135dp</dimen>
     <dimen name="dayButtonHeight">55dp</dimen>
     <dimen name="timeTextSize">24sp</dimen>
-    <dimen name="submitButtonMargin">45dp</dimen>
+    <dimen name="submitButtonMargin">50dp</dimen>
+    <dimen name="buttonTextSize">18sp</dimen>
+    <dimen name="dayWidth">150dp</dimen>
+    <dimen name="dayHeight">38dp</dimen>
+    <dimen name="conHeight">38dp</dimen>
+    <dimen name="conWidth">150dp</dimen>
 
 
 </resources>
